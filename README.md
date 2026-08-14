@@ -99,7 +99,7 @@ touching business logic.
 |-------|-------|--------|
 | 1 | Foundation: config, theme, routing, storage, utils, shared widgets | ✅ Code written — awaiting local verification |
 | 2 | Network/API layer (dio, interceptors, token refresh, mock fallback) | ✅ Code written — awaiting local verification |
-| 3 | Authentication (register, login, OTP, sessions, permissions) | Pending |
+| 3 | Authentication (register, login, OTP, sessions, permissions) | ✅ Code written — awaiting local verification |
 | 4 | Profile, dashboard, notifications, settings | Pending |
 | 5 | Groups, members, permissions, chat | Pending |
 | 6 | Financial system: wallets, contributions, transactions, payments | Pending |

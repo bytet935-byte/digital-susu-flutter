@@ -106,10 +106,47 @@ storage, refresh tokens, error handling, mock fallback, API tests.
 
 ---
 
-## Phase 3 — Authentication (pending)
+## Phase 3 — Authentication ✅ code written (awaiting local verification)
 
-Register / login / 6-digit OTP / logout / forgot password / session
-management / secure token storage / refresh / permissions foundation.
+**Scope (spec §36, Phase 3, FLOW 1):** registration, login, 6-digit OTP,
+logout, forgot/reset password, session management, secure token storage,
+automatic refresh + session expiry (Phase 2 layer), permissions foundation.
+
+**Delivered:**
+
+- `features/authentication/domain/` — `User`, `AuthSession` models (JSON
+  round-trip for caching), `AuthRepository` contract returning `Result<T>`.
+- `data/repositories/mock_auth_repository.dart` — deterministic demo backend:
+  login `0241234567` / `123456`, any 6-digit OTP. Matches the design
+  reference profile (Kwame Owusu).
+- `data/repositories/api_auth_repository.dart` — real endpoints (login,
+  register, verify-otp, resend-otp, forgot/reset password, logout,
+  /users/me); tokens persisted via `TokenStore`; user profile cached in
+  secure storage; **offline startup falls back to the cached profile without
+  destroying tokens**; auth endpoints are `skipAuth` so a 401 never triggers
+  a pointless refresh.
+- `presentation/providers/auth_providers.dart` — `AuthState` machine
+  (unknown/authenticated/unauthenticated), `AuthController` (AsyncNotifier
+  flows: login, register, verifyOtp, resend, forgot, reset, logout,
+  forceLogout), session restoration at app start.
+- Screens per design reference: real `LoginScreen` ("Welcome Back 👋"),
+  `RegisterScreen` (terms checkbox), `OtpScreen` (6-digit, auto-verify),
+  `ForgotPasswordScreen`, `ResetPasswordScreen`, updated `SplashScreen`
+  (triggers restore).
+- `core/permissions/` — `RoleBundles` + `PermissionResolver` (effective
+  permissions = role bundles ∪ explicit grants − revocations; System Admin
+  always has all). Permission checks drive future feature gating (spec §5).
+- Router: auth-state switch guard + listener navigation (login→dashboard,
+  logout/session-expiry→login); all auth routes registered; reset-password
+  route added. `main.dart` wires the network layer's session-expiry hook to
+  `forceLogout`.
+- Tests: permission resolver, mock repository, API repository (login/register/
+  verify/restore/logout incl. offline fallback + session expiry), auth
+  controller flows, auth screens widget tests.
+
+**To verify locally:** `flutter pub get && flutter analyze && flutter test`.
+
+---
 
 ## Phase 4 — User & dashboard (pending)
 

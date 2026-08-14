@@ -12,6 +12,7 @@ abstract final class AppRoutes {
   static const String register = '/register';
   static const String otp = '/otp';
   static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
 
   // Core app
   static const String dashboard = '/dashboard';
@@ -43,5 +44,6 @@ abstract final class AppRoutes {
     register,
     otp,
     forgotPassword,
+    resetPassword,
   ];
 }

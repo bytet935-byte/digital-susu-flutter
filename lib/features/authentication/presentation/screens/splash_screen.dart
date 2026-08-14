@@ -1,30 +1,38 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/config/app_config.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../providers/auth_providers.dart';
 
 /// Splash screen per design reference: deep navy background, logo mark, app
-/// name, slogan, and a loading indicator at the bottom. Auto-advances to the
-/// login route after a short brand moment.
-class SplashScreen extends StatefulWidget {
+/// name, slogan, and a loading indicator at the bottom.
+///
+/// Watching [authControllerProvider] triggers session restoration at app
+/// start; the router listener then navigates to the dashboard (signed-in) or
+/// login (signed-out). The timer is a fallback if restoration hangs.
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _timer = Timer(const Duration(milliseconds: 1600), () {
-      if (mounted) context.go(AppRoutes.login);
+      if (!mounted) return;
+      final auth = ref.read(authStateProvider);
+      context.go(auth is AuthAuthenticated
+          ? AppRoutes.dashboard
+          : AppRoutes.login);
     });
   }
 
@@ -36,6 +44,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Triggers session restoration (spec §10).
+    ref.watch(authControllerProvider);
+
     return Scaffold(
       backgroundColor: AppColors.navy,
       body: SafeArea(

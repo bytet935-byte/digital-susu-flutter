@@ -3,12 +3,25 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/config/app_config.dart';
+import 'core/providers/network_providers.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'features/authentication/presentation/providers/auth_providers.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ProviderScope(child: DigitalSusuApp()));
+  runApp(
+    ProviderScope(
+      // Wire the network layer's session-expiry hook to the auth state so a
+      // failed token refresh signs the user out app-wide (spec §10, §12).
+      overrides: <Override>[
+        sessionExpiredHandlerProvider.overrideWith(
+          (ref) => ref.watch(authSessionExpiryHandlerProvider),
+        ),
+      ],
+      child: const DigitalSusuApp(),
+    ),
+  );
 }
 
 /// Digital Susu V2 application root (Phase 1 bootstrap).

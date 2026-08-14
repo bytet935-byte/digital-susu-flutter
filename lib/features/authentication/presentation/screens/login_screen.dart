@@ -1,13 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/app_config.dart';
-import '../../../../core/config/environment.dart';
+import '../../../../core/errors/app_exception.dart';
+import '../../../../core/routing/app_routes.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../providers/auth_providers.dart';
 
-/// Phase 1 placeholder — proves branding, Ghana-first config wiring and the
-/// Material theme. The real login flow (phone/email, password, OTP) lands in
-/// Phase 3.
-class LoginScreen extends StatelessWidget {
+/// Login screen per design reference: "Welcome Back 👋 / Login to continue",
+/// Email or Phone Number + Password fields, Forgot Password link, Login
+/// button and a Sign Up link.
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _identifier = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  bool _obscurePassword = true;
+  bool _submitting = false;
+
+  @override
+  void dispose() {
+    _identifier.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    setState(() => _submitting = true);
+    try {
+      await ref.read(authControllerProvider.notifier).login(
+            identifier: _identifier.text.trim(),
+            password: _password.text,
+          );
+      // Navigation to the dashboard happens through the router's auth
+      // listener (auth state change).
+    } on AppException catch (error) {
+      if (mounted) _showError(error.message);
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,103 +62,113 @@ class LoginScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Icon(
-                  Icons.savings_outlined,
-                  size: 72,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  AppConfig.appName,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Savings • Susu • Group finance',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall,
-                ),
-                const SizedBox(height: 32),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: <Widget>[
-                        _ConfigRow(
-                          label: 'Country',
-                          value:
-                              '${AppConfig.countryName} (${AppConfig.countryCode})',
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Icon(
+                    Icons.savings_outlined,
+                    size: 64,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Welcome Back 👋',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Login to continue',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 32),
+                  TextFormField(
+                    controller: _identifier,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'Email or Phone Number',
+                      prefixIcon: Icon(Icons.person_outline),
+                    ),
+                    validator: (value) =>
+                        (value == null || value.trim().isEmpty)
+                            ? 'Enter your email or phone number'
+                            : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _password,
+                    obscureText: _obscurePassword,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _submit(),
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        icon: Icon(_obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined),
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
                         ),
-                        _ConfigRow(
-                          label: 'Currency',
-                          value:
-                              '${AppConfig.currencyCode} ${AppConfig.currencySymbol}',
-                        ),
-                        _ConfigRow(
-                          label: 'Phone',
-                          value: AppConfig.phoneCountryCode,
-                        ),
-                        _ConfigRow(
-                          label: 'Timezone',
-                          value: AppConfig.timezone,
-                        ),
-                        _ConfigRow(
-                          label: 'Locale',
-                          value: AppConfig.locale,
-                        ),
-                        _ConfigRow(
-                          label: 'Data mode',
-                          value: AppEnvironment.useMockData
-                              ? 'Mock (USE_MOCK_DATA=true)'
-                              : 'Live API',
-                        ),
-                      ],
+                      ),
+                    ),
+                    validator: (value) => (value == null || value.isEmpty)
+                        ? 'Enter your password'
+                        : null,
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => context.go(AppRoutes.forgotPassword),
+                      child: const Text('Forgot Password?'),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Authentication arrives in Phase 3.',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall,
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: _submitting ? null : _submit,
+                    child: _submitting
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: AppColors.onPrimary,
+                            ),
+                          )
+                        : const Text('Login'),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Don't have an account? ",
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      TextButton(
+                        onPressed: () => context.go(AppRoutes.register),
+                        child: const Text('Sign Up'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    AppConfig.appVersion,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.caption,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _ConfigRow extends StatelessWidget {
-  const _ConfigRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(label, style: theme.textTheme.bodySmall),
-          Text(
-            value,
-            style: theme.textTheme.labelLarge!.copyWith(
-              color: theme.colorScheme.primary,
-            ),
-          ),
-        ],
       ),
     );
   }

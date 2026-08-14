@@ -3,29 +3,34 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/authentication/presentation/providers/auth_providers.dart';
+import '../../features/authentication/presentation/screens/forgot_password_screen.dart';
 import '../../features/authentication/presentation/screens/login_screen.dart';
+import '../../features/authentication/presentation/screens/otp_screen.dart';
+import '../../features/authentication/presentation/screens/register_screen.dart';
+import '../../features/authentication/presentation/screens/reset_password_screen.dart';
 import '../../features/authentication/presentation/screens/splash_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'app_routes.dart';
 
 /// Centralized router (spec §30).
 ///
-/// Route guarding is session-based in Phase 1; permission-specific guards are
-/// layered on per-feature from Phase 3/5. Feature routes are registered as
-/// their phases land — paths already exist in [AppRoutes].
+/// Guarding is session-based: [AuthUnknown] keeps the splash visible while
+/// the session restores, unauthenticated users are restricted to public
+/// routes, and authenticated users land on the dashboard. The router listens
+/// to auth-state transitions and navigates accordingly (login → dashboard,
+/// logout/session-expiry → login). Permission-specific guards are layered on
+/// per-feature from Phase 5.
 final routerProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: AppRoutes.splash,
     redirect: (context, state) {
-      final isAuthenticated = ref.read(authStateProvider);
+      final auth = ref.read(authStateProvider);
       final isPublic = AppRoutes.publicRoutes.contains(state.matchedLocation);
-      if (!isAuthenticated && !isPublic) {
-        return AppRoutes.login;
-      }
-      if (isAuthenticated && isPublic) {
-        return AppRoutes.dashboard;
-      }
-      return null;
+      return switch (auth) {
+        AuthUnknown() => isPublic ? null : AppRoutes.splash,
+        AuthUnauthenticated() => isPublic ? null : AppRoutes.login,
+        AuthAuthenticated() => isPublic ? AppRoutes.dashboard : null,
+      };
     },
     errorBuilder: (context, state) => const _RouteErrorScreen(),
     routes: <RouteBase>[
@@ -40,12 +45,50 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
+        path: AppRoutes.register,
+        name: 'register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.otp,
+        name: 'otp',
+        builder: (context, state) => OtpScreen(
+          phone: state.uri.queryParameters['phone'] ?? '',
+          flow: state.uri.queryParameters['flow'] ?? 'register',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        name: 'forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        name: 'reset-password',
+        builder: (context, state) => ResetPasswordScreen(
+          identifier: state.uri.queryParameters['identifier'] ?? '',
+        ),
+      ),
+      GoRoute(
         path: AppRoutes.dashboard,
         name: 'dashboard',
         builder: (context, state) => const DashboardScreen(),
       ),
     ],
   );
+
+  // React to auth-state transitions: signed-in → dashboard, signed-out →
+  // login (covers login success, logout and session expiry).
+  ref.listen<AuthState>(authStateProvider, (previous, next) {
+    if (previous == next) return;
+    if (next is AuthAuthenticated) {
+      router.go(AppRoutes.dashboard);
+    } else if (next is AuthUnauthenticated) {
+      router.go(AppRoutes.login);
+    }
+  });
+
+  return router;
 });
 
 /// Fallback shown when a route has no screen yet (feature pending a phase).
