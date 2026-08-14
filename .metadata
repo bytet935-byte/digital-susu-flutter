@@ -1,0 +1,22 @@
+# This file tracks properties of this Flutter project.
+# Used by Flutter tooling to identify the project type.
+version:
+  revision: "unknown"
+  channel: "stable"
+
+project_type: app
+
+migration:
+  platforms:
+    - platform: root
+      create_revision: unknown
+      base_revision: unknown
+    - platform: android
+      create_revision: unknown
+      base_revision: unknown
+    - platform: ios
+      create_revision: unknown
+      base_revision: unknown
+
+# Uncomment the platform section as `flutter create .` is run on a machine
+# with the Flutter SDK to regenerate platform folders.

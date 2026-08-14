@@ -1,0 +1,26 @@
+# Digital Susu V2 — static analysis configuration.
+#
+# Follows the official Flutter lint set. Rules are intentionally conservative
+# in Phase 1; tighten incrementally as the codebase stabilises.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    # Code health
+    avoid_dynamic_calls: true
+    unawaited_futures: true
+    unnecessary_lambdas: true
+    prefer_final_locals: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_single_quotes: true
+
+    # Financial code safety
+    avoid_relative_lib_imports: true
+    directives_ordering: false

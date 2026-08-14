@@ -1,0 +1,81 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code related
+.vscode/*
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Native build artifacts
+/android/.gradle/
+/android/local.properties
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/ephemeral/
+/ios/Flutter/app.flx
+/ios/Flutter/app.zip
+/ios/Flutter/flutter_assets/
+/ios/Flutter/flutter_export_environment.sh
+/ios/Flutter/flutter_export_environment.sh.xcconfig
+/ios/ServiceDefinitions.json
+/ios/Runner/GeneratedPluginRegistrant.*
+
+# macOS
+/macos/Flutter/GeneratedPluginRegistrant.*
+
+# Windows
+/windows/flutter/ephemeral/
+
+# Linux
+/linux/flutter/ephemeral/
+
+# Web
+web/manifest.json
+web/index.html
+
+# Environment / secrets — never commit real credentials
+.env
+*.env
+.env.*
+!.env.example
+
+# Local IDE / tooling state
+*.code-workspace
