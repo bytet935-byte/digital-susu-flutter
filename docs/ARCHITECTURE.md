@@ -19,7 +19,8 @@ API layer (dio) / Local storage / Mock source
 
 - **Widgets** never contain financial or business logic (spec §4).
 - **Repositories** decide the data source via `AppEnvironment.useMockData`
-  (spec §11): UI is untouched when switching `USE_MOCK_DATA` (Phase 2).
+  (spec §11): UI is untouched when switching `USE_MOCK_DATA` (Phase 2). The
+  `selectRepository(mock:, api:)` seam makes this explicit per repository.
 - **Services** implement business rules (contribution, payout, savings
   calculations) and are pure Dart where possible for testability.
 - **Providers** expose state to the UI; they never talk to the network

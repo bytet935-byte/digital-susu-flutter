@@ -63,10 +63,48 @@ flutter test
 
 ---
 
-## Phase 2 — Network/API layer (pending)
+## Phase 2 — Network/API layer ✅ code written (awaiting local verification)
 
-API client (dio), endpoints, auth/logging interceptors, token refresher,
-error mapping, mock repositories fallback (`USE_MOCK_DATA=true`), API tests.
+**Scope (spec §36, Phase 2):** API client, endpoints, interceptors, token
+storage, refresh tokens, error handling, mock fallback, API tests.
+
+**Delivered:**
+
+- `lib/core/network/api_config.dart` — `ApiConfig` (base URL/timeout from
+  environment), `RequestFlags` (skipAuth / isRefreshRequest / retried).
+- `lib/core/network/api_endpoints.dart` — centralised endpoint paths for every
+  feature (auth, users, groups, contributions, wallets, payments,
+  transactions, notifications, chat, voting, reports, KYC, susu systems).
+- `lib/core/network/api_exception_mapper.dart` — maps all DioException types
+  and HTTP statuses (400/401/403/404/409/422/429/5xx) onto the `AppException`
+  hierarchy; prefers the server's `message`; JSON decode failures →
+  `MalformedResponseException`. No raw errors reach the UI (spec §12).
+- `lib/core/network/token_store.dart` — `TokenStore` abstraction with
+  `SecureStorageTokenStore` (prod) and `InMemoryTokenStore` (tests/mock).
+- `lib/core/network/token_refresher.dart` — refresh with **single-flight**
+  (concurrent 401s share one refresh); rejected refresh token clears the
+  session and fires `onSessionExpired` (spec §10, §28).
+- `lib/core/network/auth_interceptor.dart` — attaches `Bearer` token to
+  protected requests, skips public ones, transparently refreshes and retries
+  **once** on 401 (infinite-loop guard via `RequestFlags.retried`).
+- `lib/core/network/logging_interceptor.dart` — debug logging gated by
+  `DEBUG_LOGGING`.
+- `lib/core/network/api_client.dart` — typed helpers `getMap/getList/postMap/
+  putMap/patchMap/delete` with shape validation and last-resort error safety.
+- `lib/core/network/repository_selector.dart` — `selectRepository(mock:, api:)`
+  seam; feature repositories switch on `USE_MOCK_DATA` without UI changes
+  (spec §11).
+- `lib/core/providers/network_providers.dart` — apiConfig / tokenStore /
+  apiClient providers; `sessionExpiredHandlerProvider` is overridden in
+  Phase 3 to sign the user out.
+- Tests (dependency-free fake Dio adapter): error mapping, API client decode/
+  error paths, token refresh (success, rejection, missing token, single-
+  flight), auth interceptor (attach/skip/retry/session-expiry/no-loop), mock
+  fallback selection.
+
+**To verify locally:** `flutter pub get && flutter analyze && flutter test`.
+
+---
 
 ## Phase 3 — Authentication (pending)
 

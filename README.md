@@ -98,7 +98,7 @@ touching business logic.
 | Phase | Scope | Status |
 |-------|-------|--------|
 | 1 | Foundation: config, theme, routing, storage, utils, shared widgets | ✅ Code written — awaiting local verification |
-| 2 | Network/API layer (dio, interceptors, token refresh, mock fallback) | Pending |
+| 2 | Network/API layer (dio, interceptors, token refresh, mock fallback) | ✅ Code written — awaiting local verification |
 | 3 | Authentication (register, login, OTP, sessions, permissions) | Pending |
 | 4 | Profile, dashboard, notifications, settings | Pending |
 | 5 | Groups, members, permissions, chat | Pending |
