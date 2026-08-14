@@ -46,6 +46,15 @@ This project is developed in an environment without the Flutter SDK, so all
 code is written by hand and **must be verified locally**. Per the project rule,
 "all tests pass" will only be claimed once they are actually executed.
 
+## Backend API (server/)
+
+Node.js + TypeScript + Express + PostgreSQL (build spec §23–§26). See
+[server/README.md](server/README.md) — layered Routes → Controllers →
+Services → Repositories; full domain schema in `server/database/schema.sql`;
+runs in-memory without a database and on PostgreSQL when `DATABASE_URL` is set.
+**Verified: typecheck clean, 18/18 tests pass, production build + live smoke
+test succeed.**
+
 ## Project structure
 
 ```
@@ -101,6 +110,7 @@ touching business logic.
 | 2 | Network/API layer (dio, interceptors, token refresh, mock fallback) | ✅ Code written — awaiting local verification |
 | 3 | Authentication (register, login, OTP, sessions, permissions) | ✅ Code written — awaiting local verification |
 | 4 | Profile, dashboard, notifications, settings | ✅ Code written — awaiting local verification |
+| B | Backend API (Node/TS/Express/PG) | ✅ Verified — typecheck + 18 tests + live smoke test pass |
 | 5 | Groups, members, permissions, chat | Pending |
 | 6 | Financial system: wallets, contributions, transactions, payments | Pending |
 | 7 | Susu systems: rotational susu, savings goals, joint business | Pending |

@@ -1,10 +1,10 @@
 # Digital Susu V2 — Design System (from supplied references)
 
-Source references: `assets/design/design_reference_1.jpg` + `design_reference_3.jpg`
-(13-screen decks) and `design_reference_2.jpg` + `design_reference_4.jpg`
-(12-screen decks). These define the visual contract the app follows — screen
-inventory, palette, typography, and flows. Applied from Phase 1 onward so every
-screen built lands on the design system; full visual polish remains Phase 11.
+Source references: `design_reference_1.jpg`, `_3.jpg`, `_5.jpg` (13-screen
+decks) and `design_reference_2.jpg`, `_4.jpg`, `_6.jpg` (12-screen decks).
+These define the visual contract the app follows — screen inventory, palette,
+typography, and flows. Applied from Phase 1 onward so every screen built lands
+on the design system; full visual polish remains Phase 11.
 
 ## Color palette
 
@@ -69,6 +69,21 @@ Sign Up / Login → Create / Join Susu → Contribute Securely → Track Progres
 Group Susu (blue), Individual Susu (purple), Payments (green), Invite (indigo),
 Chat (blue), Notifications (red), Security (orange), History (pink) — used for
 quick actions and empty states.
+
+## Navigation reconciliation (build spec §4 vs design deck)
+
+The build spec lists primary areas HOME / GROUPS / WALLET / ACTIVITY / PROFILE;
+the design deck's bottom navigation is Home · Groups · [+] · Wallet · Profile.
+Resolved as: the deck's nav is authoritative (it is the visual contract), and
+ACTIVITY is delivered as a full Activity/transactions screen
+(`/transactions`) reachable from the dashboard (History quick action),
+profile and wallet — with search, filters and statuses (spec §14).
+
+## Responsive layout (spec §19)
+
+Mobile (< 840dp): bottom navigation bar (deck). Tablet/desktop (≥ 840dp):
+NavigationRail + content area — the desktop layout uses the extra space
+instead of stretching the mobile layout.
 
 ## Reference data (from the decks)
 

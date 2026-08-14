@@ -3,8 +3,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
 
-/// Application shell with the design-reference bottom navigation:
-/// Home · Groups · [+] · Wallet · Profile (spec §31).
+/// Application shell with the design-reference navigation (spec §21, §31):
+/// Home · Groups · [+] · Wallet · Profile.
+///
+/// **Responsive (spec §19):** narrow screens use the bottom navigation bar;
+/// wide screens (tablet/desktop ≥ 840dp) switch to a [NavigationRail] so the
+/// extra space is used intelligently instead of stretching the mobile layout.
 ///
 /// Uses [StatefulNavigationShell] (indexed stack) so each tab keeps its own
 /// scroll/state. The centre "+" is the create-susu action (Phase 5).
@@ -28,16 +32,115 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= 840) {
+          return _DesktopShell(
+            currentIndex: navigationShell.currentIndex,
+            onSelect: _goBranch,
+            onCreate: () => _createSusu(context),
+            body: navigationShell,
+          );
+        }
+        return Scaffold(
+          body: navigationShell,
+          bottomNavigationBar: _BottomBar(
+            currentIndex: navigationShell.currentIndex,
+            onSelect: _goBranch,
+            onCreate: () => _createSusu(context),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Desktop / tablet layout: NavigationRail + body (spec §19, §21)
+// ---------------------------------------------------------------------------
+
+class _DesktopShell extends StatelessWidget {
+  const _DesktopShell({
+    required this.currentIndex,
+    required this.onSelect,
+    required this.onCreate,
+    required this.body,
+  });
+
+  final int currentIndex;
+  final ValueChanged<int> onSelect;
+  final VoidCallback onCreate;
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: _BottomBar(
-        currentIndex: navigationShell.currentIndex,
-        onSelect: _goBranch,
-        onCreate: () => _createSusu(context),
+      body: Row(
+        children: <Widget>[
+          NavigationRail(
+            selectedIndex: currentIndex,
+            onDestinationSelected: onSelect,
+            labelType: NavigationRailLabelType.all,
+            leading: Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 16),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: const Text(
+                  'D',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            destinations: const <NavigationRailDestination>[
+              NavigationRailDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: Text('Home'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.groups_outlined),
+                selectedIcon: Icon(Icons.groups),
+                label: Text('Groups'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.account_balance_wallet_outlined),
+                selectedIcon: Icon(Icons.account_balance_wallet),
+                label: Text('Wallet'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.person_outline),
+                selectedIcon: Icon(Icons.person),
+                label: Text('Profile'),
+              ),
+            ],
+          ),
+          const VerticalDivider(width: 1),
+          Expanded(child: body),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: onCreate,
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
       ),
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// Mobile layout: bottom navigation bar (design reference)
+// ---------------------------------------------------------------------------
 
 class _BottomBar extends StatelessWidget {
   const _BottomBar({

@@ -15,6 +15,7 @@ import '../../features/notifications/presentation/screens/notifications_screen.d
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../../features/wallet/presentation/screens/wallet_screen.dart';
 import '../../shared/widgets/main_shell.dart';
 import 'app_routes.dart';
@@ -124,6 +125,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.notifications,
         name: 'notifications',
         builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.transactions,
+        name: 'transactions',
+        builder: (context, state) => const TransactionsScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,

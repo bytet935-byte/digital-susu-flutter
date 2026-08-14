@@ -185,6 +185,45 @@ plus the design-reference bottom navigation shell.
 
 ---
 
+## Phase B — Backend API foundation ✅ VERIFIED (tests executed)
+
+**Scope (build spec §23–§26, §29):** Node.js + TypeScript + Express +
+PostgreSQL layered backend; database schema; security engineering; tests.
+
+**Delivered & verified in this environment:**
+
+- `server/` — `package.json`, `tsconfig.json` (strict), `.env.example`
+  (no secrets), README.
+- Layered architecture: routes → controllers → services → repositories
+  (`src/routes`, `src/controllers`, `src/services`, `src/repositories`,
+  `src/models`), zod validation at the boundary, consistent error envelope,
+  helmet + CORS allow-list + rate limiting, bcrypt hashing, JWT access +
+  rotating refresh tokens in `sessions`.
+- **Dual persistence**: PostgreSQL repositories (`pg.repos.ts`, parameterised
+  SQL) when `DATABASE_URL` is set; in-memory repositories otherwise — so the
+  whole stack runs and is tested anywhere (spec §30).
+- `database/schema.sql` — full domain model: identity (users/sessions/
+  devices/OTP/password resets/KYC), groups (members/roles/invitations/join
+  requests/rules), financials (structurally separated personal vs group
+  wallets, append-only transactions, double-entry ledger, contribution
+  schedules, payout cycles), communication, governance (proposals/votes),
+  audit logs. UUIDs, enums, FKs, CHECK constraints, indexes, triggers.
+- Core services: auth (register/login/refresh rotation/logout/OTP/verify),
+  groups (create/list/get/members, role checks), wallet (top-up/withdraw/
+  contribute with **idempotency keys, no negative balances, strict
+  personal/group wallet separation**, membership enforcement), transactions
+  (filterable history).
+- **Verification (executed here):** `npm run typecheck` clean; `npm test`
+  **18/18 pass** (auth service, wallet service, API tests); `npm run build`
+  compiles; live smoke test (register → login → top-up → wallet → txns)
+  passes.
+
+**Known gaps for later phases:** notification/payout/schedule services,
+chat/voting endpoints, admin module, PostgreSQL integration tests (need a
+running database), real SMS/payment providers behind the same seams.
+
+---
+
 ## Phase 5 — Groups (pending)
 
 Create/join/approve/invite/remove members, permissions, rules, schedules,
