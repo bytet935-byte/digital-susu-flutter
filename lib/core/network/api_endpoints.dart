@@ -18,6 +18,11 @@ abstract final class ApiEndpoints {
   static const String myPermissions = '/users/me/permissions';
 
   // -------------------------------------------------------------------------
+  // Dashboard (permission-filtered, spec §13)
+  // -------------------------------------------------------------------------
+  static const String dashboard = '/dashboard';
+
+  // -------------------------------------------------------------------------
   // Groups & members
   // -------------------------------------------------------------------------
   static const String groups = '/groups';

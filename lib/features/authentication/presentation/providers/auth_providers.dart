@@ -188,6 +188,20 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     _authState.setUnauthenticated();
     state = const AsyncData(null);
   }
+
+  /// Replaces the session user after a successful profile update (tokens and
+  /// the authenticated state are preserved).
+  void updateSessionUser(User user) {
+    final session = state.valueOrNull;
+    if (session == null) return;
+    final updated = AuthSession(
+      accessToken: session.accessToken,
+      refreshToken: session.refreshToken,
+      user: user,
+    );
+    state = AsyncData(updated);
+    _authState.setAuthenticated(updated);
+  }
 }
 
 /// Wired into the network layer's `sessionExpiredHandlerProvider` (in

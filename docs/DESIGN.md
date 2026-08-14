@@ -1,10 +1,10 @@
 # Digital Susu V2 — Design System (from supplied references)
 
-Source references: `assets/design/design_reference_1.jpg` (13-screen deck) and
-`design_reference_2.jpg` (12-screen deck). These define the visual contract the
-app follows — screen inventory, palette, typography, and flows. Applied from
-Phase 1 onward so every screen built lands on the design system; full visual
-polish remains Phase 11.
+Source references: `assets/design/design_reference_1.jpg` + `design_reference_3.jpg`
+(13-screen decks) and `design_reference_2.jpg` + `design_reference_4.jpg`
+(12-screen decks). These define the visual contract the app follows — screen
+inventory, palette, typography, and flows. Applied from Phase 1 onward so every
+screen built lands on the design system; full visual polish remains Phase 11.
 
 ## Color palette
 
@@ -70,13 +70,28 @@ Group Susu (blue), Individual Susu (purple), Payments (green), Invite (indigo),
 Chat (blue), Notifications (red), Security (orange), History (pink) — used for
 quick actions and empty states.
 
+## Reference data (from the decks)
+
+Demo profile: **Kwame Owusu**, phone `024 123 4567`; balance **GHS 1,250.00**.
+Active susu groups: **Weekend Susu** (GHS 500, 10 members, next payout
+25 Aug 2026, my contribution 50/100), **Project Susu** (GHS 750, 15 members,
+10 Sep 2026), **Business Susu** (GHS 1,200, 20 members, 5 Oct 2026).
+Notifications: New Contribution · Upcoming Payout · Payment Successful ·
+New Member Added.
+
 ## Implementation status
 
 - ✅ Palette applied (`core/theme/app_colors.dart`)
 - ✅ Poppins bundled + registered (`assets/fonts/`, pubspec)
 - ✅ Splash screen (`features/authentication/.../splash_screen.dart`)
-- ⏳ Onboarding / Login / Sign Up screens — Phase 3 (authentication)
-- ⏳ Dashboard, Wallet, My Susu, Susu Details, Contribute, Payments, Chat,
-  Notifications, Profile — Phase 4–7 with the feature work
-- ⏳ Bottom nav shell — Phase 4
+- ✅ Login / Sign Up / OTP / Forgot & Reset Password — Phase 3
+- ✅ Dashboard (balance card, quick actions, active susu, recent
+  transactions) — Phase 4
+- ✅ Notifications screen (read/unread, mark-all-read) — Phase 4
+- ✅ Profile screen (avatar, name, phone, KYC chip, menu, red Logout) — Phase 4
+- ✅ Settings screen (notification toggles, market readout) — Phase 4
+- ✅ Bottom nav shell (Home · Groups · [+] · Wallet · Profile) — Phase 4
+- ⏳ Wallet, My Susu list, Susu Details, Contribute, Payments, Chat —
+  Phase 5–7 with the feature work
+- ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

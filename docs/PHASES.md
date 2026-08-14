@@ -148,9 +148,42 @@ automatic refresh + session expiry (Phase 2 layer), permissions foundation.
 
 ---
 
-## Phase 4 — User & dashboard (pending)
+## Phase 4 — User & dashboard ✅ code written (awaiting local verification)
 
-Profile, permission-aware dashboard, notifications, settings.
+**Scope (spec §36, Phase 4):** profile, dashboard, notifications, settings,
+plus the design-reference bottom navigation shell.
+
+**Delivered:**
+
+- `shared/widgets/main_shell.dart` — bottom nav per design: Home · Groups ·
+  [+] · Wallet · Profile (StatefulShellRoute.indexedStack keeps per-tab
+  state); the centre "+" is the create-susu action (Phase 5).
+- **Dashboard** (`features/dashboard/`) — permission-filtered summary model
+  (`DashboardSummary`, `DashboardGroup`, `DashboardTransaction` with Money
+  amounts), mock repository matching the design data (balance GHS 1,250.00,
+  Weekend/Project/Business Susu with pots, member counts, next payouts,
+  progress), API repository (`GET /dashboard`), AsyncNotifier with
+  loading/error/retry/refresh (spec §32), screen per design (greeting,
+  navy balance card, quick actions, active susu progress bars, recent
+  transactions green/red, notification bell with unread badge).
+- **Notifications** (`features/notifications/`) — model with categories,
+  mock (design items) + API repositories, controller with mark-read /
+  mark-all-read, screen with unread dots and empty state.
+- **Profile** (`features/profile/`) — screen per design (avatar, name, phone,
+  KYC chip, menu incl. red Logout with confirmation dialog), Edit Profile
+  form (validated, saves via ProfileRepository mock/API, updates the active
+  session immediately).
+- **Settings** (`features/settings/`) — notification toggles persisted
+  locally, market readout (country/currency/timezone/data mode).
+- Router: `StatefulShellRoute` + standalone routes for notifications,
+  settings and profile-edit.
+- Tests: dashboard mock data (design values, progress clamp, credit/debit),
+  dashboard provider, notifications repository (unread, mark-read),
+  profile screen widget tests (renders user, logout confirmation and flow).
+
+**To verify locally:** `flutter pub get && flutter analyze && flutter test`.
+
+---
 
 ## Phase 5 — Groups (pending)
 
