@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/authentication/presentation/providers/auth_providers.dart';
 import '../../features/authentication/presentation/screens/login_screen.dart';
+import '../../features/authentication/presentation/screens/splash_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'app_routes.dart';
 
@@ -14,7 +15,7 @@ import 'app_routes.dart';
 /// their phases land — paths already exist in [AppRoutes].
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.splash,
     redirect: (context, state) {
       final isAuthenticated = ref.read(authStateProvider);
       final isPublic = AppRoutes.publicRoutes.contains(state.matchedLocation);
@@ -28,6 +29,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
     errorBuilder: (context, state) => const _RouteErrorScreen(),
     routes: <RouteBase>[
+      GoRoute(
+        path: AppRoutes.splash,
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: AppRoutes.login,
         name: 'login',

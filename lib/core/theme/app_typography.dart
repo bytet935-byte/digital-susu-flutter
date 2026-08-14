@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 /// Typography scale for Digital Susu V2.
 ///
-/// Functional baseline — Phase 11 refines hierarchy using design references.
+/// Poppins per the supplied design reference (Regular/Medium/SemiBold/Bold),
+/// bundled in `assets/fonts/`.
 abstract final class AppTypography {
-  static const String fontFamily = 'Roboto';
+  static const String fontFamily = 'Poppins';
 
   // Display
   static const TextStyle displayLarge = TextStyle(

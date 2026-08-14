@@ -25,8 +25,9 @@ abstract final class AppTheme {
       useMaterial3: true,
       brightness: brightness,
       colorScheme: scheme,
+      fontFamily: AppTypography.fontFamily,
       scaffoldBackgroundColor:
-          isDark ? const Color(0xFF101311) : AppColors.background,
+          isDark ? const Color(0xFF0F172A) : AppColors.background,
     );
 
     return base.copyWith(
@@ -73,7 +74,7 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? const Color(0xFF1A1E1B) : AppColors.surface,
+        fillColor: isDark ? const Color(0xFF1E293B) : AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.outline),
@@ -88,7 +89,7 @@ abstract final class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        color: isDark ? const Color(0xFF1A1E1B) : AppColors.surface,
+        color: isDark ? const Color(0xFF1E293B) : AppColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),

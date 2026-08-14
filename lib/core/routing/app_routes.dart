@@ -4,6 +4,9 @@
 /// phase lands. Path constants are defined up front so navigation calls and
 /// redirect logic never depend on raw string literals.
 abstract final class AppRoutes {
+  // Brand entry
+  static const String splash = '/';
+
   // Authentication (Phase 3 wires the full screens)
   static const String login = '/login';
   static const String register = '/register';
@@ -35,6 +38,7 @@ abstract final class AppRoutes {
 
   /// Routes reachable without an authenticated session (spec §10, §30).
   static const List<String> publicRoutes = <String>[
+    splash,
     login,
     register,
     otp,

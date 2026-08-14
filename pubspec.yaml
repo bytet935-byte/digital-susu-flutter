@@ -40,7 +40,19 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # Assets are registered here as they are added (e.g. design references,
-  # logos, fonts). No assets are bundled in Phase 1.
-  # assets:
-  #   - assets/images/
+  # Design reference screenshots (docs/DESIGN.md)
+  assets:
+    - assets/design/
+
+  # Design system typography — Poppins (per design reference)
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
