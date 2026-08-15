@@ -224,10 +224,41 @@ running database), real SMS/payment providers behind the same seams.
 
 ---
 
-## Phase 5 — Groups (pending)
+## Phase 5 — Groups ✅ code written (awaiting local verification)
 
-Create/join/approve/invite/remove members, permissions, rules, schedules,
-announcements, chat + moderation.
+**Scope (spec §6, §14; build spec §8–§10):** groups list, details, create,
+join, members, chat; FLOW 2/3.
+
+**Delivered:**
+
+- Domain (`features/groups/domain/`) — `SusuGroup` (types, lifecycle statuses,
+  pot via Money), `GroupMember` (roles), `GroupMessage`; `GroupsRepository`
+  contract.
+- `MockGroupsRepository` — design-reference data (Weekend Susu 10, Project
+  Susu 15, Business Susu 20, completed Choir Savings; chat conversation per
+  the deck), create/join with validation; `ApiGroupsRepository` for the real
+  backend.
+- Providers — `myGroupsProvider` (create/join refresh the list),
+  `groupDetailsProvider`, `groupMembersProvider`,
+  `groupMessagesProvider` (send appends locally).
+- Screens — **Groups tab** (Active/Completed tabs per design, group cards
+  with pot/members/next payout/status badge, Create Susu FAB, Join action);
+  **Group Details** (header + Overview/Members/Chat tabs per build spec §9);
+  **Create Susu** (name/type/description, radio types, validation);
+  **Join Group** (invite code, FLOW 3); **Chat tab** (design reference:
+  own messages right in blue, others left with names + timestamps, composer,
+  empty/loading/error states).
+- Shared `StatusBadge` extracted to `shared/widgets` (component system,
+  §21) and reused by groups + transactions; text+color status (spec §28).
+- Routes: `/groups/:groupId`, `/groups/create`, `/groups/join`.
+- Tests: mock repo (list/details/create/join/chat), groups screen widget
+  (tabs), chat widget (render + send).
+
+**Deferred to later phases:** invite/approve flows, member add/remove UI with
+permission gating (MANAGE_MEMBERS), schedule/rules configuration (Phase 7),
+announcements and moderation actions (Phase 8).
+
+**To verify locally:** `flutter pub get && flutter analyze && flutter test`.
 
 ## Phase 6 — Financial system (pending)
 

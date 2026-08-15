@@ -10,7 +10,10 @@ import '../../features/authentication/presentation/screens/register_screen.dart'
 import '../../features/authentication/presentation/screens/reset_password_screen.dart';
 import '../../features/authentication/presentation/screens/splash_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../../features/groups/presentation/screens/create_group_screen.dart';
+import '../../features/groups/presentation/screens/group_details_screen.dart';
 import '../../features/groups/presentation/screens/groups_screen.dart';
+import '../../features/groups/presentation/screens/join_group_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
@@ -120,6 +123,23 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: AppRoutes.groupDetailsTemplate,
+        name: 'group-details',
+        builder: (context, state) => GroupDetailsScreen(
+          groupId: state.pathParameters['groupId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.groupCreate,
+        name: 'group-create',
+        builder: (context, state) => const CreateGroupScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.groupJoin,
+        name: 'group-join',
+        builder: (context, state) => const JoinGroupScreen(),
       ),
       GoRoute(
         path: AppRoutes.notifications,

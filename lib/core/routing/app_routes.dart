@@ -18,6 +18,8 @@ abstract final class AppRoutes {
   static const String dashboard = '/dashboard';
   static const String groups = '/groups';
   static const String groupDetailsTemplate = '/groups/:groupId';
+  static const String groupCreate = '/groups/create';
+  static const String groupJoin = '/groups/join';
 
   /// Builds a group details path for a concrete group id.
   static String groupDetails(String groupId) => '/groups/$groupId';

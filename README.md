@@ -111,7 +111,7 @@ touching business logic.
 | 3 | Authentication (register, login, OTP, sessions, permissions) | ✅ Code written — awaiting local verification |
 | 4 | Profile, dashboard, notifications, settings | ✅ Code written — awaiting local verification |
 | B | Backend API (Node/TS/Express/PG) | ✅ Verified — typecheck + 18 tests + live smoke test pass |
-| 5 | Groups, members, permissions, chat | Pending |
+| 5 | Groups, members, permissions, chat | ✅ Code written — awaiting local verification |
 | 6 | Financial system: wallets, contributions, transactions, payments | Pending |
 | 7 | Susu systems: rotational susu, savings goals, joint business | Pending |
 | 8 | Governance: proposals, voting, moderation, audit | Pending |
