@@ -126,6 +126,10 @@ New Member Added.
   type icons, timestamps and Completed / Pending / Failed status chips;
   mock + API repositories (ledger served by `GET /transactions`), route
   `/payments` registered and dashboard "Payments" quick action wired to it
+- ✅ Invite Friends — dashboard Invite quick action opens `/invite`: active
+  susu groups with invite codes (mock SUSU-4821 / SUSU-7395 / SUSU-2106; API
+  falls back until the server returns `invite_code`), one-tap Copy with
+  confirmation; feeds the join-by-code flow
 - ⏳ My Susu list, Susu Details, Chat —
   Phase 5–7 with the feature work
 - ⏳ Onboarding screen — Phase 11 polish
