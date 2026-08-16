@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../shared/models/money.dart';
 import '../../../../shared/widgets/status_badge.dart';
 import '../../../contributions/presentation/widgets/contribute_sheet.dart';
 import '../../domain/group_models.dart';
@@ -55,6 +56,10 @@ class GroupOverviewTab extends ConsumerWidget {
         if (group.type == GroupTypes.rotationalSusu) ...<Widget>[
           const SizedBox(height: 16),
           _PayoutScheduleCard(groupId: group.id),
+        ],
+        if (group.type == GroupTypes.savingsGoal) ...<Widget>[
+          const SizedBox(height: 16),
+          _SavingsGoalCard(groupId: group.id, pot: group.pot),
         ],
         const SizedBox(height: 20),
         // Contribution progress is driven by the contribution schedule
@@ -289,6 +294,130 @@ class _PayoutCard extends StatelessWidget {
               '${schedule.frequencyLabel}',
               style: theme.textTheme.bodySmall,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Savings-goal group progress (Phase 7): goal pot, target date, milestone
+/// ladder. Hidden when no goal is available.
+class _SavingsGoalCard extends ConsumerWidget {
+  const _SavingsGoalCard({required this.groupId, required this.pot});
+
+  final String groupId;
+  final Money pot;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final goalAsync = ref.watch(savingsGoalProvider(groupId));
+    return goalAsync.when(
+      loading: () => const SizedBox(height: 80),
+      error: (error, stackTrace) => const SizedBox.shrink(),
+      data: (goal) => _GoalCard(groupId: groupId, pot: pot, goal: goal),
+    );
+  }
+}
+
+class _GoalCard extends StatelessWidget {
+  const _GoalCard({required this.groupId, required this.pot, required this.goal});
+
+  final String groupId;
+  final Money pot;
+  final SavingsGoal goal;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final progress =
+        goal.targetAmount.amountMinor <= 0
+            ? 0.0
+            : (pot.amountMinor / goal.targetAmount.amountMinor).clamp(0.0, 1.0);
+    final targetDate = goal.targetDate;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Goal Progress', style: theme.textTheme.titleSmall),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '${goal.targetAmount.format()} goal',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 6,
+                backgroundColor: AppColors.background,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  '${pot.format()} of ${goal.targetAmount.format()}',
+                  style: theme.textTheme.emphasis,
+                ),
+                if (targetDate != null)
+                  Text(
+                    'by ${DateFormatter.formatDate(targetDate)}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+              ],
+            ),
+            const Divider(height: 24),
+            Text('Milestones', style: theme.textTheme.titleSmall),
+            const SizedBox(height: 4),
+            for (final GoalMilestone milestone in goal.milestones)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      pot.amountMinor >= milestone.amount.amountMinor
+                          ? Icons.check_circle
+                          : Icons.radio_button_unchecked,
+                      size: 18,
+                      color: pot.amountMinor >= milestone.amount.amountMinor
+                          ? AppColors.success
+                          : AppColors.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      milestone.label,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const Spacer(),
+                    Text(
+                      milestone.amount.format(),
+                      style: theme.textTheme.emphasis,
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

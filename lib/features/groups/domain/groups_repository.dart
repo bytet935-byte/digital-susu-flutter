@@ -41,4 +41,8 @@ abstract interface class GroupsRepository {
   /// Payout schedule for rotational susu groups (Phase 7); other group
   /// types fail with a "no schedule" error and the UI hides the card.
   Future<Result<SusuSchedule>> getPayoutSchedule(String groupId);
+
+  /// Savings goal for savings-goal groups (Phase 7); other group types
+  /// fail and the UI hides the card.
+  Future<Result<SavingsGoal>> getSavingsGoal(String groupId);
 }

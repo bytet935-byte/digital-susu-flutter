@@ -104,6 +104,17 @@ final payoutScheduleProvider =
   };
 });
 
+/// Savings goal for savings-goal groups (Phase 7); fails gracefully for
+/// other group types and in API mode (card hidden).
+final savingsGoalProvider =
+    FutureProvider.family<SavingsGoal, String>((ref, groupId) async {
+  final result = await ref.read(groupsRepositoryProvider).getSavingsGoal(groupId);
+  return switch (result) {
+    Success<SavingsGoal>(:final value) => value,
+    Failure<SavingsGoal>(:final error) => throw error,
+  };
+});
+
 /// Group members.
 final groupMembersProvider =
     FutureProvider.family<List<GroupMember>, String>((ref, groupId) async {

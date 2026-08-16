@@ -170,4 +170,26 @@ void main() {
           isA<NotFoundException>());
     });
   });
+
+  group('MockGroupsRepository — savings goal (Phase 7)', () {
+    test('returns the milestone ladder for savings-goal groups', () async {
+      final result = await repo.getSavingsGoal('grp_project');
+
+      expect(result.isSuccess, isTrue);
+      final goal = result.valueOrNull!;
+      expect(goal.targetAmount, const Money(200000));
+      expect(goal.targetDate, DateTime(2026, 9, 10));
+      expect(goal.milestones, hasLength(4));
+      expect(goal.milestones.first.label, '25%');
+      expect(goal.milestones.first.amount, const Money(50000));
+      expect(goal.milestones.last.percent, 1.0);
+    });
+
+    test('fails for non-savings-goal group types', () async {
+      final result = await repo.getSavingsGoal('grp_weekend');
+      expect(result, isA<Failure<SavingsGoal>>());
+      expect((result as Failure<SavingsGoal>).error,
+          isA<NotFoundException>());
+    });
+  });
 }

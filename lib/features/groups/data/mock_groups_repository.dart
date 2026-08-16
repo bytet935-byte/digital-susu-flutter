@@ -370,4 +370,45 @@ class MockGroupsRepository implements GroupsRepository {
       ),
     );
   }
+
+  @override
+  Future<Result<SavingsGoal>> getSavingsGoal(String groupId) async {
+    // Only savings-goal groups carry a milestone ladder (Phase 7).
+    if (groupId != 'grp_project') {
+      return const Failure<SavingsGoal>(
+        NotFoundException(
+          message: 'No savings goal for this group type.',
+        ),
+      );
+    }
+    // DateTime(...) prevents a const result; amounts stay const.
+    return Success<SavingsGoal>(
+      SavingsGoal(
+        targetAmount: const Money(200000),
+        targetDate: DateTime(2026, 9, 10),
+        milestones: const <GoalMilestone>[
+          GoalMilestone(
+            label: '25%',
+            percent: 0.25,
+            amount: Money(50000),
+          ),
+          GoalMilestone(
+            label: '50%',
+            percent: 0.5,
+            amount: Money(100000),
+          ),
+          GoalMilestone(
+            label: '75%',
+            percent: 0.75,
+            amount: Money(150000),
+          ),
+          GoalMilestone(
+            label: '100%',
+            percent: 1.0,
+            amount: Money(200000),
+          ),
+        ],
+      ),
+    );
+  }
 }

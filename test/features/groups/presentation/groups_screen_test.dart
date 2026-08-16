@@ -128,6 +128,65 @@ void main() {
       await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
       await tester.pumpAndSettle();
 
+      expect(find.text('Payout Schedule'), findsNothing);
+    });
+
+    testWidgets('savings-goal groups show the goal progress card',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_project',
+        name: 'Project Susu',
+        type: GroupTypes.savingsGoal,
+        status: GroupStatuses.active,
+        pot: Money(75000),
+        memberCount: 15,
+        totalMembers: 15,
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Goal Progress'), findsOneWidget);
+      expect(find.text('GH₵ 2,000.00 goal'), findsOneWidget);
+      expect(
+        find.textContaining('GH₵ 750.00 of GH₵ 2,000.00'),
+        findsOneWidget,
+      );
+      // Pot GHS 750 has passed the GHS 500 milestone only.
+      expect(find.byIcon(Icons.check_circle), findsOneWidget);
+      expect(find.byIcon(Icons.radio_button_unchecked), findsNWidgets(3));
+    });
+
+    testWidgets('rotational groups hide the goal progress card',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_weekend',
+        name: 'Weekend Susu',
+        type: GroupTypes.rotationalSusu,
+        status: GroupStatuses.active,
+        pot: Money(50000),
+        memberCount: 10,
+        totalMembers: 10,
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Goal Progress'), findsNothing);
+    });
+
+    testWidgets('savings-goal groups hide the payout schedule card',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_project',
+        name: 'Project Susu',
+        type: GroupTypes.savingsGoal,
+        status: GroupStatuses.active,
+        pot: Money(75000),
+        memberCount: 15,
+        totalMembers: 15,
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
       expect(find.text('Rotational Susu'), findsNothing);
     });
 

@@ -266,3 +266,39 @@ class PayoutTurn extends Equatable {
   @override
   List<Object?> get props => <Object?>[memberName, date, amount];
 }
+
+/// Savings-goal group plan (Phase 7): target pot, target date and the
+/// milestone ladder. Reached-state is derived from the group pot at render
+/// time (pot >= milestone.amount).
+class SavingsGoal extends Equatable {
+  const SavingsGoal({
+    required this.targetAmount,
+    this.targetDate,
+    required this.milestones,
+  });
+
+  final Money targetAmount;
+  final DateTime? targetDate;
+  final List<GoalMilestone> milestones;
+
+  @override
+  List<Object?> get props => <Object?>[targetAmount, targetDate, milestones];
+}
+
+/// One milestone on the goal ladder (Phase 7).
+class GoalMilestone extends Equatable {
+  const GoalMilestone({
+    required this.label,
+    required this.percent,
+    required this.amount,
+  });
+
+  final String label;
+
+  /// 0.0–1.0 position on the bar (25% / 50% / 75% / 100%).
+  final double percent;
+  final Money amount;
+
+  @override
+  List<Object?> get props => <Object?>[label, percent, amount];
+}
