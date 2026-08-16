@@ -142,6 +142,11 @@ New Member Added.
   75/100% ladder); overview "Goal Progress" card (pot vs goal, target
   date, milestone checks derived from the pot); hidden for other group
   types and in API mode until the backend endpoint lands
-- ⏳ Joint-business reports — Phase 7
+- ✅ Joint-business reports — **Phase 7**: `BusinessReport` + `BusinessEntry`
+  models; mock period report for Business Susu (GHS 1,200 capital, GHS 480
+  revenue, GHS -315 expenses, GHS 165 profit, six activity entries);
+  overview "Business Report" card (capital chip, revenue/expenses/profit
+  stats, recent activity); hidden for other group types and in API mode
+  until the backend endpoint lands — **Phase 7 complete**
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

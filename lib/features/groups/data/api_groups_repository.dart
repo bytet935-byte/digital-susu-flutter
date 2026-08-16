@@ -88,8 +88,11 @@ class ApiGroupsRepository implements GroupsRepository {
   @override
   Future<Result<List<GroupMessage>>> getMessages(String groupId) async {
     try {
-      final data = await _client.getList(ApiEndpoints.groupMessages(groupId));
-      final messages = data
+      // Server returns { messages: [...] }.
+      final data = await _client.getMap(ApiEndpoints.groupMessages(groupId));
+      final items = data['messages'];
+      if (items is! List<dynamic>) throw const MalformedResponseException();
+      final messages = items
           .whereType<Map<String, dynamic>>()
           .map(GroupMessage.fromJson)
           .toList();

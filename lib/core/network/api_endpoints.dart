@@ -34,19 +34,27 @@ abstract final class ApiEndpoints {
   static const String groups = '/groups';
   static String group(String groupId) => '/groups/$groupId';
   static String groupMembers(String groupId) => '/groups/$groupId/members';
+  static String groupMember(String groupId, String memberId) =>
+      '/groups/$groupId/members/$memberId';
   static String groupWallet(String groupId) => '/groups/$groupId/wallet';
   static String groupContributions(String groupId) =>
       '/groups/$groupId/contributions';
-
-  /// Group chat messages — server route pending (Phase 5).
   static String groupMessages(String groupId) => '/groups/$groupId/messages';
+
+  // Governance (spec §20, build spec §16)
+  static String groupProposals(String groupId) =>
+      '/groups/$groupId/proposals';
+  static String groupProposal(String groupId, String proposalId) =>
+      '/groups/$groupId/proposals/$proposalId';
+  static String groupProposalVote(String groupId, String proposalId) =>
+      '/groups/$groupId/proposals/$proposalId/vote';
 
   // Transactions
   static const String transactions = '/transactions';
 
-  // Notifications — server routes pending (Phase 4+).
+  // Notifications
   static const String notifications = '/notifications';
   static String notification(String notificationId) =>
-      '/notifications/$notificationId';
+      '/notifications/$notificationId/read';
   static const String notificationsReadAll = '/notifications/read-all';
 }

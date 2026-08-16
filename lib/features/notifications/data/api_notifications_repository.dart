@@ -14,8 +14,11 @@ class ApiNotificationsRepository implements NotificationsRepository {
   @override
   Future<Result<List<AppNotification>>> getNotifications() async {
     try {
-      final data = await _client.getList(ApiEndpoints.notifications);
-      return Success<List<AppNotification>>(data
+      // Server returns { notifications: [...], unread_count: N }.
+      final data = await _client.getMap(ApiEndpoints.notifications);
+      final items = data['notifications'];
+      if (items is! List<dynamic>) throw const MalformedResponseException();
+      return Success<List<AppNotification>>(items
           .whereType<Map<String, dynamic>>()
           .map(AppNotification.fromJson)
           .toList());
@@ -37,10 +40,7 @@ class ApiNotificationsRepository implements NotificationsRepository {
   @override
   Future<Result<void>> markRead(String notificationId) async {
     try {
-      await _client.postMap(
-        ApiEndpoints.notification(notificationId),
-        data: <String, dynamic>{'read': true},
-      );
+      await _client.postMap(ApiEndpoints.notification(notificationId));
       return const Success<void>(null);
     } on AppException catch (error) {
       return Failure<void>(error);
