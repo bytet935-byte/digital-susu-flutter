@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-import '../../config/app_config.dart';
+import '../config/app_config.dart';
 import '../../shared/models/money.dart';
 
 /// Formatting helpers for Ghana-first display (spec §2).

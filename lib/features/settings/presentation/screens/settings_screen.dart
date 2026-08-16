@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/config/environment.dart';
 import '../../../../core/providers/app_providers.dart';
+import '../../../../core/theme/app_typography.dart';
 
 /// Settings screen (spec §22): notification preferences (persisted locally)
 /// and market configuration readout. Provider-level notification settings

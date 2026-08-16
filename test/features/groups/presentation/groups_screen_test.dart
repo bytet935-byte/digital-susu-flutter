@@ -13,7 +13,8 @@ Widget wrap(Widget child) => ProviderScope(
       overrides: <Override>[
         groupsRepositoryProvider.overrideWithValue(MockGroupsRepository()),
       ],
-      child: MaterialApp(home: child),
+      // Scaffold supplies the Material ancestor TextFields require.
+      child: MaterialApp(home: Scaffold(body: child)),
     );
 
 /// Authenticated auth state so the chat composer can send as the demo user.
@@ -36,7 +37,8 @@ Widget wrapAuthed(Widget child) => ProviderScope(
         groupsRepositoryProvider.overrideWithValue(MockGroupsRepository()),
         authStateProvider.overrideWith(_AuthedAuthState.new),
       ],
-      child: MaterialApp(home: child),
+      // Scaffold supplies the Material ancestor TextFields require.
+      child: MaterialApp(home: Scaffold(body: child)),
     );
 
 void main() {
@@ -65,7 +67,7 @@ void main() {
 
   group('GroupChatTab (build spec §10, design reference)', () {
     testWidgets('renders the conversation and composer', (tester) async {
-      await tester.pumpWidget(wrap(GroupChatTab(
+      await tester.pumpWidget(wrap(const GroupChatTab(
         groupId: 'grp_weekend',
         currentUserId: MockGroupsRepository.currentUserId,
       )));
@@ -79,7 +81,7 @@ void main() {
 
     testWidgets('sending a message appends it to the conversation',
         (tester) async {
-      await tester.pumpWidget(wrapAuthed(GroupChatTab(
+      await tester.pumpWidget(wrapAuthed(const GroupChatTab(
         groupId: 'grp_weekend',
         currentUserId: MockGroupsRepository.currentUserId,
       )));

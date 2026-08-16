@@ -33,8 +33,12 @@ void main() {
 
       expect(find.text('Kwame Owusu'), findsOneWidget);
       expect(find.text('+233 24 123 4567'), findsOneWidget);
-      expect(find.text('KYC: PENDING'), findsOneWidget);
+      // Demo user is VERIFIED so the home screen shows the Verified badge
+      // (design reference); the profile chip reflects the same state.
+      expect(find.text('KYC: VERIFIED'), findsOneWidget);
       expect(find.text('Edit Profile'), findsOneWidget);
+      // 'Logout' is the last list item — scroll the lazy ListView into view.
+      await tester.scrollUntilVisible(find.text('Logout'), 100);
       expect(find.text('Logout'), findsOneWidget);
     });
 
@@ -48,6 +52,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(find.text('Logout'), 100);
       await tester.tap(find.text('Logout'));
       await tester.pumpAndSettle();
 
@@ -65,6 +70,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(find.text('Logout'), 100);
       await tester.tap(find.text('Logout'));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(FilledButton, 'Log Out'));

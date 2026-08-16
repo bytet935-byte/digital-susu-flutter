@@ -15,7 +15,6 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final auth = ref.watch(authStateProvider);
     final user = switch (auth) {
       AuthAuthenticated(:final session) => session.user,
@@ -71,7 +70,7 @@ class ProfileScreen extends ConsumerWidget {
                     user?.fullName.isNotEmpty == true
                         ? user!.fullName[0].toUpperCase()
                         : 'D',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primary,

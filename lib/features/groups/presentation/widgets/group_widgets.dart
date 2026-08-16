@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/status_badge.dart';
-import '../domain/group_models.dart';
-
+import '../../domain/group_models.dart';
 /// Reusable group card (spec §21 component system; design reference "My
 /// Susu" list): name, type label, pot, member count, next payout, status.
 class GroupCard extends StatelessWidget {

@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/repository_selector.dart';
 import '../../../../core/providers/network_providers.dart';
 import '../../../../core/utils/result.dart';
-import '../data/api_transactions_repository.dart';
-import '../data/mock_transactions_repository.dart';
-import '../domain/app_transaction.dart';
-import '../domain/transactions_repository.dart';
-
+import '../../data/api_transactions_repository.dart';
+import '../../data/mock_transactions_repository.dart';
+import '../../domain/app_transaction.dart';
+import '../../domain/transactions_repository.dart';
 /// Switches mock/API via USE_MOCK_DATA (spec §11).
 final transactionsRepositoryProvider = Provider<TransactionsRepository>(
   (ref) => selectRepository<TransactionsRepository>(

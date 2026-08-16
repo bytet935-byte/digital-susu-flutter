@@ -6,7 +6,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_states.dart';
 import '../../../authentication/presentation/providers/auth_providers.dart';
-import '../domain/group_models.dart';
+import '../../domain/group_models.dart';
 import '../providers/groups_providers.dart';
 
 /// Group chat tab (build spec §10, design reference "Group Chat"): modern
@@ -79,7 +79,6 @@ class _GroupChatTabState extends ConsumerState<GroupChatTab> {
   @override
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(groupMessagesProvider(widget.groupId));
-    final controller = ref.read(groupMessagesProvider(widget.groupId).notifier);
 
     return Column(
       children: <Widget>[

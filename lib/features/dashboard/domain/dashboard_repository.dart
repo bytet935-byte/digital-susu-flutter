@@ -1,4 +1,4 @@
-import '../../../../core/utils/result.dart';
+import '../../../core/utils/result.dart';
 import 'dashboard_models.dart';
 
 /// Dashboard data contract (spec §13). Implementations: mock (demo) and API

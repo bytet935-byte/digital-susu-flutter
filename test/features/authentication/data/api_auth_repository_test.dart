@@ -1,7 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:digital_susu/core/config/app_config.dart';
 import 'package:digital_susu/core/errors/app_exception.dart';
+import 'package:digital_susu/core/utils/result.dart';
 import 'package:digital_susu/core/network/api_client.dart';
 import 'package:digital_susu/core/network/api_config.dart';
 import 'package:digital_susu/core/network/token_store.dart';

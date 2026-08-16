@@ -79,3 +79,6 @@ web/index.html
 
 # Local IDE / tooling state
 *.code-workspace
+
+# Node.js
+node_modules/

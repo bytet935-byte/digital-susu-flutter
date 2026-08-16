@@ -24,7 +24,9 @@ class MockAuthRepository implements AuthRepository {
       fullName: 'Kwame Owusu',
       phone: '+233241234567',
       email: 'kwame@digitalsusu.example',
-      kycStatus: 'PENDING',
+      // VERIFIED so the home screen shows the blue "Verified" badge, exactly
+      // like the React design reference.
+      kycStatus: 'VERIFIED',
       createdAt: DateTime(2026, 1, 15),
     ),
   };

@@ -17,6 +17,11 @@ abstract final class AppColors {
   /// Deep navy used by splash screen and hero balance cards (reference).
   static const Color navy = Color(0xFF1E3A8A);
 
+  /// Quick-action menu circle colors (reference home grid: My Susu / Payments
+  /// / Invite / History use blue, purple, teal, red).
+  static const Color quickPurple = Color(0xFF8B5CF6);
+  static const Color quickTeal = Color(0xFF14B8A6);
+
   // Neutrals
   static const Color background = Color(0xFFF3F4F6); // reference light gray
   static const Color surface = Color(0xFFFFFFFF);

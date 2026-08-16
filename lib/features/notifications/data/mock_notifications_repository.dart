@@ -1,4 +1,4 @@
-import '../../../../core/utils/result.dart';
+import '../../../core/utils/result.dart';
 import '../domain/app_notification.dart';
 import '../domain/notifications_repository.dart';
 
@@ -44,7 +44,8 @@ class MockNotificationsRepository implements NotificationsRepository {
   @override
   Future<Result<List<AppNotification>>> getNotifications() async =>
       Success<List<AppNotification>>(
-        _items.reversed.toList(), // newest first
+        _items.toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt)), // newest first
       );
 
   @override

@@ -100,8 +100,11 @@ New Member Added.
 - ✅ Poppins bundled + registered (`assets/fonts/`, pubspec)
 - ✅ Splash screen (`features/authentication/.../splash_screen.dart`)
 - ✅ Login / Sign Up / OTP / Forgot & Reset Password — Phase 3
-- ✅ Dashboard (balance card, quick actions, active susu, recent
-  transactions) — Phase 4
+- ✅ Dashboard — **rebuilt to match the React home reference**: blue header
+  bar (logo · bell badge · avatar), greeting + Verified badge, white Total
+  Balance card with eye toggle and "View Wallet >", Top Up / Withdraw /
+  Transfer actions, four-circle quick menu, Active Susu cards with status
+  pill, Recent Transactions — Phase 4
 - ✅ Notifications screen (read/unread, mark-all-read) — Phase 4
 - ✅ Profile screen (avatar, name, phone, KYC chip, menu, red Logout) — Phase 4
 - ✅ Settings screen (notification toggles, market readout) — Phase 4

@@ -1,6 +1,6 @@
-import '../../../../core/errors/app_exception.dart';
-import '../../../../core/utils/result.dart';
-import '../../../../shared/models/money.dart';
+import '../../../core/errors/app_exception.dart';
+import '../../../core/utils/result.dart';
+import '../../../shared/models/money.dart';
 import '../domain/group_models.dart';
 import '../domain/groups_repository.dart';
 
@@ -44,12 +44,12 @@ class MockGroupsRepository implements GroupsRepository {
       description: 'Joint business capital — 20 members.',
       nextPayout: DateTime(2026, 10, 5),
     ),
-    SusuGroup(
+    const SusuGroup(
       id: 'grp_completed',
       name: 'Choir Savings',
       type: GroupTypes.savingsGoal,
       status: GroupStatuses.completed,
-      pot: const Money(300000),
+      pot: Money(300000),
       memberCount: 12,
       totalMembers: 12,
       description: 'Completed — goal reached.',
@@ -58,25 +58,25 @@ class MockGroupsRepository implements GroupsRepository {
 
   final Map<String, List<GroupMember>> _members = <String, List<GroupMember>>{
     'grp_weekend': <GroupMember>[
-      GroupMember(
+      const GroupMember(
         userId: 'usr_kwame',
         fullName: 'Kwame Owusu',
         phone: '0241234567',
         role: GroupRoles.owner,
       ),
-      GroupMember(
+      const GroupMember(
         userId: 'usr_ama',
         fullName: 'Ama Serwaa',
         phone: '0559876543',
         role: GroupRoles.treasurer,
       ),
-      GroupMember(
+      const GroupMember(
         userId: 'usr_kofi',
         fullName: 'Kofi Mensah',
         phone: '0201112223',
         role: GroupRoles.member,
       ),
-      GroupMember(
+      const GroupMember(
         userId: 'usr_nana',
         fullName: 'Nana Yeboah',
         phone: '0243334445',
@@ -84,7 +84,7 @@ class MockGroupsRepository implements GroupsRepository {
       ),
     ],
     'grp_project': <GroupMember>[
-      GroupMember(
+      const GroupMember(
         userId: 'usr_kwame',
         fullName: 'Kwame Owusu',
         phone: '0241234567',
@@ -92,7 +92,7 @@ class MockGroupsRepository implements GroupsRepository {
       ),
     ],
     'grp_business': <GroupMember>[
-      GroupMember(
+      const GroupMember(
         userId: 'usr_kwame',
         fullName: 'Kwame Owusu',
         phone: '0241234567',
@@ -100,7 +100,7 @@ class MockGroupsRepository implements GroupsRepository {
       ),
     ],
     'grp_completed': <GroupMember>[
-      GroupMember(
+      const GroupMember(
         userId: 'usr_kwame',
         fullName: 'Kwame Owusu',
         phone: '0241234567',
@@ -192,7 +192,7 @@ class MockGroupsRepository implements GroupsRepository {
     );
     _groups.insert(0, group);
     _members[group.id] = <GroupMember>[
-      GroupMember(
+      const GroupMember(
         userId: currentUserId,
         fullName: 'Kwame Owusu',
         phone: '0241234567',
@@ -213,7 +213,7 @@ class MockGroupsRepository implements GroupsRepository {
     final group = _groups.firstWhere((g) => g.id == 'grp_weekend');
     final members = _members['grp_weekend']!;
     if (!members.any((m) => m.userId == currentUserId)) {
-      members.add(GroupMember(
+      members.add(const GroupMember(
         userId: currentUserId,
         fullName: 'Kwame Owusu',
         phone: '0241234567',

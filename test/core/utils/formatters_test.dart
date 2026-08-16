@@ -13,9 +13,10 @@ void main() {
     });
 
     test('compact format for thousands and millions', () {
-      expect(CurrencyFormatter.formatMoneyCompact(const Money(1500000)),
+      // Money stores minor units (pesewas): 150000000 = GHS 1,500,000.00.
+      expect(CurrencyFormatter.formatMoneyCompact(const Money(150000000)),
           'GH₵ 1.5M');
-      expect(CurrencyFormatter.formatMoneyCompact(const Money(250000)),
+      expect(CurrencyFormatter.formatMoneyCompact(const Money(25000000)),
           'GH₵ 250K');
       expect(CurrencyFormatter.formatMoneyCompact(const Money(999)),
           'GH₵ 9.99');

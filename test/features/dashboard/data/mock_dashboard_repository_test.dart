@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:digital_susu/core/utils/result.dart';
 import 'package:digital_susu/features/dashboard/data/mock_dashboard_repository.dart';
 
 void main() {

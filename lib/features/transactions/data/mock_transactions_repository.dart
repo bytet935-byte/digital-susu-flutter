@@ -1,5 +1,5 @@
-import '../../../../core/utils/result.dart';
-import '../../../../shared/models/money.dart';
+import '../../../core/utils/result.dart';
+import '../../../shared/models/money.dart';
 import '../domain/app_transaction.dart';
 import '../domain/transactions_repository.dart';
 

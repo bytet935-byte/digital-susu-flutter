@@ -1,4 +1,4 @@
-import '../../../../core/utils/result.dart';
+import '../../../core/utils/result.dart';
 import 'app_notification.dart';
 
 /// Notifications contract (spec §21).

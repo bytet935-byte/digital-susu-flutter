@@ -6,7 +6,7 @@ import '../../../../core/errors/app_exception.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
-import '../domain/group_models.dart';
+import '../../domain/group_models.dart';
 import '../providers/groups_providers.dart';
 
 /// Create-group flow (FLOW 2, spec §14): name, type selection, description.
@@ -101,16 +101,22 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                 const SizedBox(height: 24),
                 Text('Group Type', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
-                ...GroupTypes.values.map(
-                  (type) => RadioListTile<String>(
-                    value: type,
-                    groupValue: _type,
-                    onChanged: (value) =>
-                        setState(() => _type = value ?? _type),
-                    title: Text(_typeLabel(type)),
-                    subtitle: Text(_typeSubtitle(type)),
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
+                RadioGroup<String>(
+                  groupValue: _type,
+                  onChanged: (value) =>
+                      setState(() => _type = value ?? _type),
+                  child: Column(
+                    children: GroupTypes.values
+                        .map(
+                          (type) => RadioListTile<String>(
+                            value: type,
+                            title: Text(_typeLabel(type)),
+                            subtitle: Text(_typeSubtitle(type)),
+                            contentPadding: EdgeInsets.zero,
+                            dense: true,
+                          ),
+                        )
+                        .toList(),
                   ),
                 ),
                 const SizedBox(height: 24),

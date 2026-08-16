@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/repository_selector.dart';
 import '../../../../core/providers/network_providers.dart';
 import '../../../../core/utils/result.dart';
-import '../data/api_notifications_repository.dart';
-import '../data/mock_notifications_repository.dart';
-import '../domain/app_notification.dart';
-import '../domain/notifications_repository.dart';
-
+import '../../data/api_notifications_repository.dart';
+import '../../data/mock_notifications_repository.dart';
+import '../../domain/app_notification.dart';
+import '../../domain/notifications_repository.dart';
 /// Switches mock/API via USE_MOCK_DATA (spec §11).
 final notificationsRepositoryProvider = Provider<NotificationsRepository>(
   (ref) => selectRepository<NotificationsRepository>(

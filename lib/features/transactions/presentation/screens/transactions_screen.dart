@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_states.dart';
-import '../domain/app_transaction.dart';
+import '../../domain/app_transaction.dart';
 import '../providers/transactions_providers.dart';
 
 /// Activity / transaction history screen (spec §14): searchable, filterable,
@@ -113,7 +114,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
             child: transactionsAsync.when(
               loading: () => const AppLoadingView(),
               error: (error, stackTrace) => AppErrorState(
-                onRetry: () => controller.refresh(),
+                onRetry: controller.refresh,
               ),
               data: (items) {
                 final filtered = _apply(items);

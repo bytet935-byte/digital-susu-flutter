@@ -1,7 +1,7 @@
-import '../../../../core/errors/app_exception.dart';
-import '../../../../core/network/api_client.dart';
-import '../../../../core/network/api_endpoints.dart';
-import '../../../../core/utils/result.dart';
+import '../../../core/errors/app_exception.dart';
+import '../../../core/network/api_client.dart';
+import '../../../core/network/api_endpoints.dart';
+import '../../../core/utils/result.dart';
 import '../domain/dashboard_models.dart';
 import '../domain/dashboard_repository.dart';
 

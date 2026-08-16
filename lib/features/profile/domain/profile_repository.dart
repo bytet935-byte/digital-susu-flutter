@@ -1,4 +1,4 @@
-import '../../../../core/utils/result.dart';
+import '../../../core/utils/result.dart';
 import '../../authentication/domain/models/user.dart';
 
 /// Profile management contract (spec §22).

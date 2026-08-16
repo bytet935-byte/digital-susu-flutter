@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_states.dart';
-import '../../../../shared/widgets/status_badge.dart';
 import '../../../authentication/presentation/providers/auth_providers.dart';
-import '../domain/group_models.dart';
+import '../../domain/group_models.dart';
 import '../providers/groups_providers.dart';
 import 'group_chat_tab.dart';
 import 'group_members_tab.dart';
@@ -20,7 +19,6 @@ class GroupDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final groupAsync = ref.watch(groupDetailsProvider(groupId));
 
     return groupAsync.when(

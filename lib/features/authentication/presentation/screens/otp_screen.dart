@@ -114,7 +114,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 style: theme.textTheme.headlineMedium?.copyWith(
                   letterSpacing: 12,
                 ),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: '••••••',
                   counterText: '',
                   filled: true,
@@ -122,7 +122,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 onChanged: (value) {
                   if (value.length == AppConfig.otpLength) _verify();
                 },
-                onSubmitted: (_) => _verify(),
+                onFieldSubmitted: (_) => _verify(),
               ),
               const SizedBox(height: 24),
               FilledButton(

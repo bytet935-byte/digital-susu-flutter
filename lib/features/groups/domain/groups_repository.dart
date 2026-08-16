@@ -1,4 +1,4 @@
-import '../../../../core/utils/result.dart';
+import '../../../core/utils/result.dart';
 import 'group_models.dart';
 
 /// Groups contract (spec §6, §14; build spec §8–§10).

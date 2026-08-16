@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_states.dart';
-import '../domain/app_notification.dart';
+import '../../domain/app_notification.dart';
 import '../providers/notifications_providers.dart';
 
 /// Notifications screen per design reference (spec §21): list of activity
@@ -15,7 +16,6 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final notificationsAsync = ref.watch(notificationsProvider);
     final controller = ref.read(notificationsProvider.notifier);
 
@@ -24,7 +24,7 @@ class NotificationsScreen extends ConsumerWidget {
         title: const Text('Notifications'),
         actions: <Widget>[
           TextButton(
-            onPressed: () => controller.markAllRead(),
+            onPressed: controller.markAllRead,
             child: const Text('Mark all read'),
           ),
         ],
@@ -32,7 +32,7 @@ class NotificationsScreen extends ConsumerWidget {
       body: notificationsAsync.when(
         loading: () => const AppLoadingView(),
         error: (error, stackTrace) => AppErrorState(
-          onRetry: () => controller.refresh(),
+          onRetry: controller.refresh,
         ),
         data: (items) {
           if (items.isEmpty) {

@@ -1,16 +1,8 @@
 import '../config/environment.dart';
 
-/// Mock/API repository selection seam (spec §11).
+/// Picks the mock or API implementation of a repository based on the
+/// compile-time `USE_MOCK_DATA` flag (spec §11).
 ///
-/// Feature repositories use this helper so the UI never changes when
-/// switching `USE_MOCK_DATA`:
-///
-/// ```dart
-/// final groupsRepositoryProvider = Provider<GroupsRepository>((ref) =>
-///     selectRepository(
-///       mock: MockGroupsRepository(),
-///       api: ApiGroupsRepository(ref.watch(apiClientProvider)),
-///     ));
-/// ```
+/// Mock mode is the default so the app runs out of the box in development.
 T selectRepository<T>({required T mock, required T api}) =>
     AppEnvironment.useMockData ? mock : api;

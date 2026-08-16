@@ -11,7 +11,8 @@ import 'package:dio/dio.dart';
 class FakeDioAdapter implements HttpClientAdapter {
   FakeDioAdapter({this.handler});
 
-  final Future<ResponseBody> Function(RequestOptions options)? handler;
+  /// Mutable so each test can swap in its own handler.
+  Future<ResponseBody> Function(RequestOptions options)? handler;
 
   /// Number of fetch calls performed.
   int requestCount = 0;

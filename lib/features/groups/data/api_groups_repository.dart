@@ -1,8 +1,8 @@
-import '../../../../core/errors/app_exception.dart';
-import '../../../../core/network/api_client.dart';
-import '../../../../core/network/api_endpoints.dart';
-import '../../../../core/utils/result.dart';
-import '../../../../shared/models/money.dart';
+import '../../../core/errors/app_exception.dart';
+import '../../../core/network/api_client.dart';
+import '../../../core/network/api_endpoints.dart';
+import '../../../core/utils/result.dart';
+import '../../../shared/models/money.dart';
 import '../domain/group_models.dart';
 import '../domain/groups_repository.dart';
 

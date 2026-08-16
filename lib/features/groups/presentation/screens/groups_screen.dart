@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_states.dart';
-import '../domain/group_models.dart';
+import '../../domain/group_models.dart';
 import '../providers/groups_providers.dart';
 import '../widgets/group_widgets.dart';
 
@@ -48,7 +48,7 @@ class GroupsScreen extends ConsumerWidget {
         body: groupsAsync.when(
           loading: () => const AppLoadingView(),
           error: (error, stackTrace) => AppErrorState(
-            onRetry: () => controller.refresh(),
+            onRetry: controller.refresh,
           ),
           data: (groups) {
             final active =

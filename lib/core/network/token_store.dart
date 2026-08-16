@@ -1,10 +1,10 @@
 import '../config/app_config.dart';
 import '../storage/storage_service.dart';
 
-/// Abstraction over auth-token persistence (spec §10, §27).
+/// Persistence for access/refresh tokens (spec §10, §27).
 ///
-/// Tokens are secrets: the production implementation uses platform secure
-/// storage (Keychain/Keystore). Tests use [InMemoryTokenStore].
+/// Production uses platform secure storage via [SecureStorageTokenStore];
+/// tests use [InMemoryTokenStore].
 abstract interface class TokenStore {
   Future<String?> readAccessToken();
 
@@ -18,7 +18,8 @@ abstract interface class TokenStore {
   Future<void> clear();
 }
 
-/// Production token store backed by secure storage.
+/// Production token store backed by the platform secure storage service
+/// (Keychain / Keystore / encrypted storage).
 class SecureStorageTokenStore implements TokenStore {
   SecureStorageTokenStore(this._secure);
 
@@ -42,10 +43,13 @@ class SecureStorageTokenStore implements TokenStore {
   }
 
   @override
-  Future<void> clear() => _secure.clear();
+  Future<void> clear() async {
+    await _secure.delete(AppConfig.secureKeyAccessToken);
+    await _secure.delete(AppConfig.secureKeyRefreshToken);
+  }
 }
 
-/// In-memory token store for tests and mock mode.
+/// In-memory token store for tests and mock-mode (spec §11).
 class InMemoryTokenStore implements TokenStore {
   String? _accessToken;
   String? _refreshToken;

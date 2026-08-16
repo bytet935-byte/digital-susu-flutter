@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/repository_selector.dart';
 import '../../../../core/providers/network_providers.dart';
 import '../../../../core/utils/result.dart';
-import '../data/api_groups_repository.dart';
-import '../data/mock_groups_repository.dart';
-import '../domain/group_models.dart';
-import '../domain/groups_repository.dart';
-
+import '../../data/api_groups_repository.dart';
+import '../../data/mock_groups_repository.dart';
+import '../../domain/group_models.dart';
+import '../../domain/groups_repository.dart';
 /// Switches mock/API via USE_MOCK_DATA (spec §11).
 final groupsRepositoryProvider = Provider<GroupsRepository>((ref) {
   return selectRepository<GroupsRepository>(

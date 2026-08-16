@@ -5,9 +5,8 @@ import '../../../../core/providers/network_providers.dart';
 import '../../../../core/utils/result.dart';
 import '../../data/api_dashboard_repository.dart';
 import '../../data/mock_dashboard_repository.dart';
-import '../domain/dashboard_models.dart';
-import '../domain/dashboard_repository.dart';
-
+import '../../domain/dashboard_models.dart';
+import '../../domain/dashboard_repository.dart';
 /// Switches mock/API via USE_MOCK_DATA (spec §11).
 final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
   return selectRepository<DashboardRepository>(

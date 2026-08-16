@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:digital_susu/core/errors/app_exception.dart';
 import 'package:digital_susu/features/authentication/data/repositories/mock_auth_repository.dart';
-import 'package:digital_susu/features/authentication/domain/models/auth_session.dart';
 import 'package:digital_susu/features/authentication/presentation/providers/auth_providers.dart';
 
 void main() {

@@ -6,6 +6,7 @@ import '../../../../core/config/app_config.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../providers/auth_providers.dart';
 
 /// Login screen per design reference: "Welcome Back 👋 / Login to continue",

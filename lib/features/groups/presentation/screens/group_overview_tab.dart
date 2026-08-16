@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/status_badge.dart';
-import '../domain/group_models.dart';
-
+import '../../domain/group_models.dart';
 /// Overview tab (build spec §9): description, status, pot, members, next
 /// payout, type. Contribution flow arrives with Phase 6.
 class GroupOverviewTab extends StatelessWidget {

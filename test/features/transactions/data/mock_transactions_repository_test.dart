@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:digital_susu/core/utils/result.dart';
 import 'package:digital_susu/features/transactions/data/mock_transactions_repository.dart';
 
 void main() {

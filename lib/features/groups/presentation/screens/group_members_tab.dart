@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/app_loading.dart';
 import '../../../../shared/widgets/app_states.dart';
-import '../domain/group_models.dart';
+import '../../domain/group_models.dart';
 import '../providers/groups_providers.dart';
 
 /// Members tab (build spec §9): member list with role badges and the owner

@@ -1,40 +1,25 @@
-import 'package:dio/dio.dart';
-
 import '../config/environment.dart';
 
-/// Dio configuration for the Digital Susu API (spec §11).
+/// Compile-time API configuration (spec §12).
+///
+/// Values come from `--dart-define` flags via [AppEnvironment]; tests build
+/// explicit const instances.
 class ApiConfig {
-  const ApiConfig({required this.baseUrl, required this.timeout});
+  const ApiConfig({
+    required this.baseUrl,
+    this.timeout = const Duration(seconds: 30),
+  });
 
-  /// Builds config from compile-time environment flags.
-  factory ApiConfig.fromEnvironment() => ApiConfig(
+  /// Builds the config from `--dart-define` values (USE_MOCK_DATA is handled
+  /// by the repository selector; this carries the base URL and timeout).
+  factory ApiConfig.fromEnvironment() => const ApiConfig(
         baseUrl: AppEnvironment.apiBaseUrl,
         timeout: AppEnvironment.apiTimeout,
       );
 
+  /// Base URL of the backend, e.g. `https://api.example.com/v1`.
   final String baseUrl;
+
+  /// Request/response timeout (spec §12).
   final Duration timeout;
-
-  BaseOptions toBaseOptions() => BaseOptions(
-        baseUrl: baseUrl,
-        connectTimeout: timeout,
-        receiveTimeout: timeout,
-        sendTimeout: timeout,
-        headers: <String, dynamic>{
-          Headers.acceptHeader: Headers.jsonContentType,
-        },
-        contentType: Headers.jsonContentType,
-      );
-}
-
-/// Well-known request option flags used by interceptors.
-abstract final class RequestFlags {
-  /// When set, [AuthInterceptor] does not attach an access token.
-  static const String skipAuth = 'skipAuth';
-
-  /// Marks the token-refresh request so it never triggers another refresh.
-  static const String isRefreshRequest = 'isRefreshRequest';
-
-  /// Marks a request that already retried after a token refresh.
-  static const String retried = 'retried';
 }

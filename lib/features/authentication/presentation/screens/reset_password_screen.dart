@@ -88,10 +88,10 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
                   maxLength: 6,
-                  counterText: '',
                   decoration: const InputDecoration(
                     labelText: 'Reset Code',
                     prefixIcon: Icon(Icons.password_outlined),
+                    counterText: '',
                   ),
                   validator: (value) =>
                       (value == null || value.length != 6)

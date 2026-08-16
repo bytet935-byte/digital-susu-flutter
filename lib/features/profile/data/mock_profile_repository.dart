@@ -1,4 +1,4 @@
-import '../../../../core/utils/result.dart';
+import '../../../core/utils/result.dart';
 import '../../authentication/domain/models/user.dart';
 import '../domain/profile_repository.dart';
 

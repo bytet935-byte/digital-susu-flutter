@@ -71,3 +71,15 @@ abstract final class AppTypography {
     fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
   );
 }
+
+/// Convenience accessors on Material's stock [TextTheme], which has no
+/// `emphasis` / `money` / `caption` members (caption was removed in newer
+/// Flutter). Colors are left to the enclosing [DefaultTextStyle] (the light
+/// theme resolves them to onSurface).
+extension AppTextTheme on TextTheme {
+  TextStyle get emphasis => AppTypography.emphasis;
+
+  TextStyle get money => AppTypography.money;
+
+  TextStyle get caption => AppTypography.caption;
+}

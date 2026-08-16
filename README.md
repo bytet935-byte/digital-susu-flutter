@@ -38,9 +38,21 @@ flutter run --dart-define=USE_MOCK_DATA=false \
 
 | Check | Status |
 |-------|--------|
-| `flutter pub get` | ⏳ Pending — requires Flutter SDK (not available in the authoring environment) |
-| `flutter analyze` | ⏳ Pending |
-| `flutter test` | ⏳ Pending |
+| `flutter pub get` | ✅ Passed (Flutter 3.47.0 / Dart 3.13.0 — `intl` pinned to `^0.20.3` to match `flutter_localizations`) |
+| `flutter analyze` | ✅ Passed — **No issues found** (lib/ + test/) |
+| `flutter test` | ✅ Passed — **98/98 tests** |
+| `flutter build web --release` | ✅ Passed — production bundle in `build/web` |
+
+> **Verified on 2026-08-16 with Flutter 3.47.0 stable** (installed at
+> `/home/wuying/flutter`). The hand-written Phase 1–5 code had dozens of
+> broken relative imports, a missing `core/network/` layer (ApiClient /
+> ApiConfig / ApiEndpoints / TokenStore / repository_selector — implemented
+> to match the repository + test contracts), a missing
+> `TextTheme.emphasis/caption` extension, plus Flutter-3.47 API removals
+> (`caption`, `RadioListTile.groupValue`) and test bugs (minor/major unit
+> mix-up, mock sort order, missing Material ancestors). All fixed. The home
+> screen was rebuilt to match the React "Digital Susu" reference (blue
+> header, balance card, actions, quick menu, Active Susu cards).
 
 This project is developed in an environment without the Flutter SDK, so all
 code is written by hand and **must be verified locally**. Per the project rule,
