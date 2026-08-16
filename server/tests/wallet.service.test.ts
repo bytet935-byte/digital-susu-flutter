@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
   MemoryAuditRepo,
   MemoryGroupMemberRepo,
+  MemoryNotificationRepo,
   MemoryTransactionRepo,
   MemoryWalletRepo,
   resetMemoryStore,
@@ -24,7 +25,13 @@ function build() {
 
   const auth = new AuthService(users, sessions, wallets, audit);
   const groupService = new GroupService(groups, members, users, audit);
-  const walletService = new WalletService(wallets, transactions, members, audit);
+  const walletService = new WalletService(
+    wallets,
+    transactions,
+    members,
+    audit,
+    new MemoryNotificationRepo(),
+  );
   return { auth, groupService, walletService, users };
 }
 

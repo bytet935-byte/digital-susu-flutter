@@ -3,7 +3,10 @@ import { Pool, QueryResultRow } from 'pg';
 import {
   AuditLog,
   GroupMember,
+  GroupMessage,
   Notification,
+  Proposal,
+  ProposalVote,
   Session,
   SusuGroup,
   Transaction,
@@ -14,7 +17,9 @@ import {
   AuditRepo,
   GroupMemberRepo,
   GroupRepo,
+  MessageRepo,
   NotificationRepo,
+  ProposalRepo,
   SessionRepo,
   TransactionRepo,
   UserRepo,
@@ -441,5 +446,101 @@ function rowToNotification(row: QueryResultRow): Notification {
   return {
     id: row.id, user_id: row.user_id, title: row.title, body: row.body,
     category: row.category, read: row.read, created_at: row.created_at,
+  };
+}
+
+export class PgMessageRepo implements MessageRepo {
+  constructor(private readonly pool: Pool) {}
+
+  async create(message: Omit<GroupMessage, 'id' | 'created_at'>): Promise<GroupMessage> {
+    const row = await this.pool.query(
+      `INSERT INTO group_messages (group_id, sender_id, body, kind, pinned)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [message.group_id, message.sender_id, message.body, message.kind, message.pinned],
+    );
+    return rowToMessage(row.rows[0]);
+  }
+
+  async listForGroup(groupId: string): Promise<GroupMessage[]> {
+    const rows = await this.pool.query(
+      'SELECT * FROM group_messages WHERE group_id = $1 ORDER BY created_at DESC',
+      [groupId],
+    );
+    return rows.rows.map(rowToMessage);
+  }
+}
+
+export class PgProposalRepo implements ProposalRepo {
+  constructor(private readonly pool: Pool) {}
+
+  async create(proposal: Omit<Proposal, 'id' | 'created_at'>): Promise<Proposal> {
+    const row = await this.pool.query(
+      `INSERT INTO proposals (group_id, created_by, title, description, options, voting_ends, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [proposal.group_id, proposal.created_by, proposal.title, proposal.description ?? null,
+       JSON.stringify(proposal.options), proposal.voting_ends, proposal.status],
+    );
+    return rowToProposal(row.rows[0]);
+  }
+
+  async findById(id: string): Promise<Proposal | null> {
+    const row = await this.pool.query('SELECT * FROM proposals WHERE id = $1', [id]);
+    return row.rows[0] ? rowToProposal(row.rows[0]) : null;
+  }
+
+  async listForGroup(groupId: string): Promise<Proposal[]> {
+    const rows = await this.pool.query(
+      'SELECT * FROM proposals WHERE group_id = $1 ORDER BY created_at DESC',
+      [groupId],
+    );
+    return rows.rows.map(rowToProposal);
+  }
+
+  async vote(vote: ProposalVote): Promise<ProposalVote> {
+    const row = await this.pool.query(
+      `INSERT INTO proposal_votes (proposal_id, user_id, option)
+       VALUES ($1, $2, $3) RETURNING *`,
+      [vote.proposal_id, vote.user_id, vote.option],
+    );
+    return rowToVote(row.rows[0]);
+  }
+
+  async findVote(proposalId: string, userId: string): Promise<ProposalVote | null> {
+    const row = await this.pool.query(
+      'SELECT * FROM proposal_votes WHERE proposal_id = $1 AND user_id = $2 LIMIT 1',
+      [proposalId, userId],
+    );
+    return row.rows[0] ? rowToVote(row.rows[0]) : null;
+  }
+
+  async updateStatus(id: string, status: Proposal['status'], result?: string | null): Promise<void> {
+    await this.pool.query(
+      'UPDATE proposals SET status = $2, result = $3 WHERE id = $1',
+      [id, status, result ?? null],
+    );
+  }
+}
+
+function rowToMessage(row: QueryResultRow): GroupMessage {
+  return {
+    id: row.id, group_id: row.group_id, sender_id: row.sender_id, body: row.body,
+    kind: row.kind, pinned: row.pinned, created_at: row.created_at,
+  };
+}
+
+function rowToProposal(row: QueryResultRow): Proposal {
+  return {
+    id: row.id, group_id: row.group_id, created_by: row.created_by, title: row.title,
+    description: row.description,
+    options: typeof row.options === 'string' ? JSON.parse(row.options) : row.options ?? [],
+    voting_ends: row.voting_ends, status: row.status, result: row.result,
+    created_at: row.created_at,
+  };
+}
+
+function rowToVote(row: QueryResultRow): ProposalVote {
+  return {
+    proposal_id: row.proposal_id, user_id: row.user_id, option: row.option,
+    created_at: row.created_at,
   };
 }

@@ -108,3 +108,33 @@ export interface Notification {
   read: boolean;
   created_at: string;
 }
+
+export interface GroupMessage {
+  id: string;
+  group_id: string;
+  sender_id: string;
+  body: string;
+  kind: 'MESSAGE' | 'ANNOUNCEMENT';
+  pinned: boolean;
+  created_at: string;
+}
+
+export interface Proposal {
+  id: string;
+  group_id: string;
+  created_by: string;
+  title: string;
+  description?: string | null;
+  options: string[];
+  voting_ends: string;
+  status: 'OPEN' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
+  result?: string | null;
+  created_at: string;
+}
+
+export interface ProposalVote {
+  proposal_id: string;
+  user_id: string;
+  option: string;
+  created_at: string;
+}

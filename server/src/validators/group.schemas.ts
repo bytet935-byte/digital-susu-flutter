@@ -27,3 +27,19 @@ export const addMemberSchema = z.object({
 export const updateMemberRoleSchema = z.object({
   role: z.enum(['MEMBER', 'TREASURER', 'MODERATOR', 'ADMIN']),
 });
+
+export const messageSchema = z.object({
+  body: z.string().trim().min(1, 'Message cannot be empty').max(2000),
+  kind: z.enum(['MESSAGE', 'ANNOUNCEMENT']).default('MESSAGE'),
+});
+
+export const proposalSchema = z.object({
+  title: z.string().trim().min(3, 'Proposal title is required').max(120),
+  description: z.string().trim().max(1000).optional(),
+  options: z.array(z.string().trim().min(1)).min(2, 'At least two options are required').max(8),
+  voting_ends: z.string().datetime({ offset: true }),
+});
+
+export const voteSchema = z.object({
+  option: z.string().trim().min(1),
+});

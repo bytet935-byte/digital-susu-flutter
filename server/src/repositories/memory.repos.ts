@@ -3,7 +3,10 @@ import { randomUUID } from 'crypto';
 import {
   AuditLog,
   GroupMember,
+  GroupMessage,
   Notification,
+  Proposal,
+  ProposalVote,
   Session,
   SusuGroup,
   Transaction,
@@ -14,7 +17,9 @@ import {
   AuditRepo,
   GroupMemberRepo,
   GroupRepo,
+  MessageRepo,
   NotificationRepo,
+  ProposalRepo,
   SessionRepo,
   TransactionRepo,
   UserRepo,
@@ -34,6 +39,9 @@ export class MemoryStore {
   transactions: Transaction[] = [];
   audit: AuditLog[] = [];
   notifications: Notification[] = [];
+  messages: GroupMessage[] = [];
+  proposals: Proposal[] = [];
+  votes: ProposalVote[] = [];
 }
 
 let shared: MemoryStore | null = null;
@@ -373,6 +381,79 @@ export class MemoryNotificationRepo implements NotificationRepo {
   async markAllRead(userId: string): Promise<void> {
     for (const notification of this.store.notifications) {
       if (notification.user_id === userId) notification.read = true;
+    }
+  }
+}
+
+export class MemoryMessageRepo implements MessageRepo {
+  private get store(): MemoryStore {
+    return getMemoryStore();
+  }
+
+  async create(message: Omit<GroupMessage, 'id' | 'created_at'>): Promise<GroupMessage> {
+    const record: GroupMessage = {
+      ...message,
+      id: `msg_${randomUUID()}`,
+      created_at: now(),
+    };
+    this.store.messages.push(record);
+    return record;
+  }
+
+  async listForGroup(groupId: string): Promise<GroupMessage[]> {
+    return this.store.messages
+      .filter((m) => m.group_id === groupId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  }
+}
+
+export class MemoryProposalRepo implements ProposalRepo {
+  private get store(): MemoryStore {
+    return getMemoryStore();
+  }
+
+  async create(proposal: Omit<Proposal, 'id' | 'created_at'>): Promise<Proposal> {
+    const record: Proposal = {
+      ...proposal,
+      id: `prp_${randomUUID()}`,
+      created_at: now(),
+    };
+    this.store.proposals.push(record);
+    return record;
+  }
+
+  async findById(id: string): Promise<Proposal | null> {
+    return this.store.proposals.find((p) => p.id === id) ?? null;
+  }
+
+  async listForGroup(groupId: string): Promise<Proposal[]> {
+    return this.store.proposals
+      .filter((p) => p.group_id === groupId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  }
+
+  async vote(vote: ProposalVote): Promise<ProposalVote> {
+    this.store.votes.push(vote);
+    return vote;
+  }
+
+  async findVote(proposalId: string, userId: string): Promise<ProposalVote | null> {
+    return (
+      this.store.votes.find(
+        (v) => v.proposal_id === proposalId && v.user_id === userId,
+      ) ?? null
+    );
+  }
+
+  async updateStatus(
+    id: string,
+    status: Proposal['status'],
+    result?: string | null,
+  ): Promise<void> {
+    const proposal = this.store.proposals.find((p) => p.id === id);
+    if (proposal) {
+      proposal.status = status;
+      proposal.result = result ?? null;
     }
   }
 }

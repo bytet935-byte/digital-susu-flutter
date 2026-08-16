@@ -1,7 +1,10 @@
 import {
   AuditLog,
   GroupMember,
+  GroupMessage,
   Notification,
+  Proposal,
+  ProposalVote,
   PublicUser,
   Session,
   SusuGroup,
@@ -84,4 +87,18 @@ export interface NotificationRepo {
   unreadCount(userId: string): Promise<number>;
   markRead(id: string, userId: string): Promise<void>;
   markAllRead(userId: string): Promise<void>;
+}
+
+export interface MessageRepo {
+  create(message: Omit<GroupMessage, 'id' | 'created_at'>): Promise<GroupMessage>;
+  listForGroup(groupId: string): Promise<GroupMessage[]>;
+}
+
+export interface ProposalRepo {
+  create(proposal: Omit<Proposal, 'id' | 'created_at'>): Promise<Proposal>;
+  findById(id: string): Promise<Proposal | null>;
+  listForGroup(groupId: string): Promise<Proposal[]>;
+  vote(vote: ProposalVote): Promise<ProposalVote>;
+  findVote(proposalId: string, userId: string): Promise<ProposalVote | null>;
+  updateStatus(id: string, status: Proposal['status'], result?: string | null): Promise<void>;
 }

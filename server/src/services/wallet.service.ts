@@ -4,6 +4,7 @@ import { Transaction, Wallet } from '../models';
 import {
   AuditRepo,
   GroupMemberRepo,
+  NotificationRepo,
   TransactionRepo,
   WalletRepo,
 } from '../repositories/types';
@@ -27,6 +28,7 @@ export class WalletService {
     private readonly transactions: TransactionRepo,
     private readonly members: GroupMemberRepo,
     private readonly audit: AuditRepo,
+    private readonly notifications: NotificationRepo,
   ) {}
 
   async getPersonalWallet(userId: string): Promise<Wallet> {
@@ -158,6 +160,11 @@ export class WalletService {
       metadata: { amount_minor: amountMinor, wallet_id: options.wallet.id },
     });
 
+    await this.notifyActor(userId, type, amountMinor, options.wallet.currency);
+    if (options.groupId) {
+      await this.notifyGroupOwner(options.groupId, userId, amountMinor, options.wallet.currency);
+    }
+
     return transaction;
   }
 
@@ -165,5 +172,40 @@ export class WalletService {
     if (!Number.isInteger(amountMinor) || amountMinor <= 0) {
       throw ApiError.badRequest('Amount must be a positive whole number (pesewas).');
     }
+  }
+
+  private async notifyActor(
+    userId: string,
+    type: string,
+    amountMinor: number,
+    currency: string,
+  ): Promise<void> {
+    const amount = `GHS ${(amountMinor / 100).toFixed(2)}`;
+    const title = type === 'DEPOSIT' ? 'Top-up successful' : `${type} recorded`;
+    await this.notifications.create({
+      user_id: userId,
+      title,
+      body: `Your ${type.toLowerCase()} of ${amount} was successful.`,
+      category: 'payment_confirmation',
+      read: false,
+    });
+  }
+
+  private async notifyGroupOwner(
+    groupId: string,
+    actorId: string,
+    amountMinor: number,
+    currency: string,
+  ): Promise<void> {
+    const members = await this.members.list(groupId);
+    const owner = members.find((m) => m.role === 'GROUP_OWNER');
+    if (!owner || owner.user_id === actorId) return;
+    await this.notifications.create({
+      user_id: owner.user_id,
+      title: 'New contribution',
+      body: `A member contributed GHS ${(amountMinor / 100).toFixed(2)} to your group.`,
+      category: 'contribution_reminder',
+      read: false,
+    });
   }
 }

@@ -12,8 +12,20 @@ import {
   registerSchema,
   resetPasswordSchema,
 } from '../validators/auth.schemas';
-import { addMemberSchema, createGroupSchema, updateMemberRoleSchema } from '../validators/group.schemas';
+import {
+  addMemberSchema,
+  createGroupSchema,
+  messageSchema,
+  proposalSchema,
+  updateMemberRoleSchema,
+  voteSchema,
+} from '../validators/group.schemas';
 import { authController } from '../controllers/auth.controller';
+import {
+  chatController,
+  governanceController,
+  notificationsController,
+} from '../controllers/chat.controller';
 import { groupsController } from '../controllers/groups.controller';
 import { transactionsController } from '../controllers/transactions.controller';
 import { walletsController } from '../controllers/wallets.controller';
@@ -28,6 +40,9 @@ export function buildRouter(c: Container): Router {
   const groups = groupsController(c);
   const wallets = walletsController(c);
   const transactions = transactionsController(c);
+  const chat = chatController(c);
+  const notifications = notificationsController(c);
+  const governance = governanceController(c);
 
   // Health
   router.get('/health', (_req, res) => {
@@ -63,6 +78,20 @@ export function buildRouter(c: Container): Router {
   router.post('/groups/:groupId/contributions', authMiddleware, wallets.contribute);
 
   router.get('/transactions', authMiddleware, transactions.list);
+
+  // Chat (build spec §10)
+  router.get('/groups/:groupId/messages', authMiddleware, chat.list);
+  router.post('/groups/:groupId/messages', authMiddleware, validateBody(messageSchema), chat.send);
+
+  // Notifications (build spec §15)
+  router.get('/notifications', authMiddleware, notifications.list);
+  router.post('/notifications/:notificationId/read', authMiddleware, notifications.markRead);
+  router.post('/notifications/read-all', authMiddleware, notifications.markAllRead);
+
+  // Governance (spec §20, build spec §16)
+  router.get('/groups/:groupId/proposals', authMiddleware, governance.list);
+  router.post('/groups/:groupId/proposals', authMiddleware, validateBody(proposalSchema), governance.create);
+  router.post('/groups/:groupId/proposals/:proposalId/vote', authMiddleware, validateBody(voteSchema), governance.vote);
 
   return router;
 }
