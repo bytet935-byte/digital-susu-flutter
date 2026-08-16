@@ -159,4 +159,81 @@ void main() {
       expect(result.valueOrNull!.votes['Approve'], 7);
     });
   });
+
+  group('ApiGroupsRepository — member management (build spec §16)', () {
+    const memberRow = <String, dynamic>{
+      'user_id': 'usr_adjoa',
+      'full_name': 'Adjoa Asante',
+      'phone': '0209998887',
+      'role': 'MEMBER',
+    };
+
+    test('addMember posts the identifier to /groups/:id/members', () async {
+      await tokenStore.saveTokens(accessToken: 'at-1', refreshToken: 'rt-1');
+      adapter.handler = (options) async {
+        expect(options.path, '/groups/grp_weekend/members');
+        expect(options.method, 'POST');
+        expect(
+          (options.data as Map<String, dynamic>)['identifier'],
+          '0209998887',
+        );
+        return jsonBody(memberRow, 201);
+      };
+
+      final result = await repo.addMember(
+        groupId: 'grp_weekend',
+        identifier: '0209998887',
+        actorId: 'usr_kwame',
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(result.valueOrNull!.fullName, 'Adjoa Asante');
+      expect(result.valueOrNull!.role, 'MEMBER');
+    });
+
+    test('updateMemberRole PATCHes the role to the member path', () async {
+      await tokenStore.saveTokens(accessToken: 'at-1', refreshToken: 'rt-1');
+      adapter.handler = (options) async {
+        expect(options.path, '/groups/grp_weekend/members/usr_kofi');
+        expect(options.method, 'PATCH');
+        expect((options.data as Map<String, dynamic>)['role'], 'TREASURER');
+        return jsonBody(
+          <String, dynamic>{
+            ...memberRow,
+            'user_id': 'usr_kofi',
+            'role': 'TREASURER',
+          },
+          200,
+        );
+      };
+
+      final result = await repo.updateMemberRole(
+        groupId: 'grp_weekend',
+        memberId: 'usr_kofi',
+        role: 'TREASURER',
+        actorId: 'usr_kwame',
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(result.valueOrNull!.userId, 'usr_kofi');
+      expect(result.valueOrNull!.role, 'TREASURER');
+    });
+
+    test('removeMember DELETEs the member path', () async {
+      await tokenStore.saveTokens(accessToken: 'at-1', refreshToken: 'rt-1');
+      adapter.handler = (options) async {
+        expect(options.path, '/groups/grp_weekend/members/usr_kofi');
+        expect(options.method, 'DELETE');
+        return jsonBody(<String, dynamic>{'message': 'Member removed'}, 200);
+      };
+
+      final result = await repo.removeMember(
+        groupId: 'grp_weekend',
+        memberId: 'usr_kofi',
+        actorId: 'usr_kwame',
+      );
+
+      expect(result.isSuccess, isTrue);
+    });
+  });
 }

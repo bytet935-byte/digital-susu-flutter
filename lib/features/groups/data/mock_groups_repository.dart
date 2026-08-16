@@ -497,6 +497,165 @@ class MockGroupsRepository implements GroupsRepository {
     );
   }
 
+  /// Phone/email directory for the add-member flow (build spec §16).
+  static const Map<String, Map<String, String>> _phoneDirectory =
+      <String, Map<String, String>>{
+    '0559876543': <String, String>{'id': 'usr_ama', 'name': 'Ama Serwaa'},
+    '0201112223': <String, String>{'id': 'usr_kofi', 'name': 'Kofi Mensah'},
+    '0243334445': <String, String>{'id': 'usr_nana', 'name': 'Nana Yeboah'},
+    '0209998887': <String, String>{'id': 'usr_adjoa', 'name': 'Adjoa Asante'},
+  };
+
+  static String _normalizePhone(String identifier) {
+    var digits = identifier.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('233') && digits.length > 9) {
+      digits = '0${digits.substring(3)}';
+    }
+    return digits;
+  }
+
+  bool _canManage(String groupId, String actorId) {
+    final members = _members[groupId];
+    if (members == null) return false;
+    final me = members
+        .where((GroupMember m) => m.userId == actorId)
+        .firstOrNull;
+    return me != null &&
+        (me.role == GroupRoles.owner ||
+            me.role == GroupRoles.admin ||
+            me.role == GroupRoles.moderator);
+  }
+
+  @override
+  Future<Result<GroupMember>> addMember({
+    required String groupId,
+    required String identifier,
+    required String actorId,
+  }) async {
+    if (!_canManage(groupId, actorId)) {
+      return const Failure<GroupMember>(
+        ForbiddenException(
+          message: 'Only the owner or moderators can add members.',
+        ),
+      );
+    }
+    final phone = _normalizePhone(identifier);
+    final account = _phoneDirectory[phone];
+    if (account == null) {
+      return const Failure<GroupMember>(
+        NotFoundException(
+          message: 'No account found for this phone number.',
+        ),
+      );
+    }
+    final members = _members.putIfAbsent(groupId, () => <GroupMember>[]);
+    if (members.any((GroupMember m) => m.userId == account['id'])) {
+      return const Failure<GroupMember>(
+        ConflictException(message: 'Already a member of this group.'),
+      );
+    }
+    final member = GroupMember(
+      userId: account['id']!,
+      fullName: account['name']!,
+      phone: phone,
+      role: GroupRoles.member,
+    );
+    members.add(member);
+    return Success<GroupMember>(member);
+  }
+
+  @override
+  Future<Result<GroupMember>> updateMemberRole({
+    required String groupId,
+    required String memberId,
+    required String role,
+    required String actorId,
+  }) async {
+    if (!_canManage(groupId, actorId)) {
+      return const Failure<GroupMember>(
+        ForbiddenException(
+          message: 'Only the owner or moderators can change roles.',
+        ),
+      );
+    }
+    const assignable = <String>{
+      GroupRoles.member,
+      GroupRoles.treasurer,
+      GroupRoles.moderator,
+      GroupRoles.admin,
+    };
+    if (!assignable.contains(role)) {
+      return const Failure<GroupMember>(
+        ValidationException(message: 'Unknown role.'),
+      );
+    }
+    final members = _members[groupId];
+    if (members == null) {
+      return const Failure<GroupMember>(
+        NotFoundException(message: 'Group not found.'),
+      );
+    }
+    final index = members.indexWhere((GroupMember m) => m.userId == memberId);
+    if (index == -1) {
+      return const Failure<GroupMember>(
+        NotFoundException(message: 'Member not found.'),
+      );
+    }
+    final target = members[index];
+    if (target.role == GroupRoles.owner) {
+      return const Failure<GroupMember>(
+        ForbiddenException(message: 'The owner role cannot be changed.'),
+      );
+    }
+    final updated = GroupMember(
+      userId: target.userId,
+      fullName: target.fullName,
+      phone: target.phone,
+      role: role,
+    );
+    members[index] = updated;
+    return Success<GroupMember>(updated);
+  }
+
+  @override
+  Future<Result<void>> removeMember({
+    required String groupId,
+    required String memberId,
+    required String actorId,
+  }) async {
+    if (!_canManage(groupId, actorId)) {
+      return const Failure<void>(
+        ForbiddenException(
+          message: 'Only the owner or moderators can remove members.',
+        ),
+      );
+    }
+    if (actorId == memberId) {
+      return const Failure<void>(
+        ValidationException(message: 'You cannot remove yourself.'),
+      );
+    }
+    final members = _members[groupId];
+    if (members == null) {
+      return const Failure<void>(
+        NotFoundException(message: 'Group not found.'),
+      );
+    }
+    final index = members.indexWhere((GroupMember m) => m.userId == memberId);
+    if (index == -1) {
+      return const Failure<void>(
+        NotFoundException(message: 'Member not found.'),
+      );
+    }
+    if (members[index].role == GroupRoles.owner) {
+      return const Failure<void>(
+        ForbiddenException(message: 'The owner cannot be removed.'),
+      );
+    }
+    members.removeAt(index);
+    return const Success<void>(null);
+  }
+
   @override
   Future<Result<List<GroupProposal>>> getProposals(String groupId) async =>
       Success<List<GroupProposal>>(

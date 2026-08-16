@@ -59,4 +59,27 @@ abstract interface class GroupsRepository {
     required String proposalId,
     required String option,
   });
+
+  /// Adds a member by phone/email identifier (build spec §16). Requires
+  /// owner/moderator permission (via [actorId]).
+  Future<Result<GroupMember>> addMember({
+    required String groupId,
+    required String identifier,
+    required String actorId,
+  });
+
+  /// Updates a member's role (MEMBER / TREASURER / MODERATOR / ADMIN).
+  Future<Result<GroupMember>> updateMemberRole({
+    required String groupId,
+    required String memberId,
+    required String role,
+    required String actorId,
+  });
+
+  /// Removes a member from the group.
+  Future<Result<void>> removeMember({
+    required String groupId,
+    required String memberId,
+    required String actorId,
+  });
 }

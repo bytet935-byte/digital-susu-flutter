@@ -154,5 +154,11 @@ New Member Added.
   `POST /notifications/read-all`), plus governance + member endpoint
   constants (`/proposals`, `/proposals/:id/vote`, member add/remove/role);
   adapter tests cover the real response shapes
+- ✅ Governance — **build spec §16**: Proposals tab (4th group-details
+  tab): proposal cards with status chips (Open/Passed/Rejected), per-option
+  vote bars + counts, Approve/Decline actions, "You voted" confirmation;
+  `GroupProposal` model + `getProposals`/`voteProposal` (mock persists
+  votes; API against `GET/POST /groups/:id/proposals` + vote endpoint);
+  8 new tests (mock voting rules, API contract, widget flows)
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

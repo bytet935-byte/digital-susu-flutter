@@ -93,6 +93,19 @@ class ApiClient {
   }) async =>
       _decodeMap(await _request('PUT', path, data: data, skipAuth: skipAuth));
 
+  Future<Map<String, dynamic>> patchMap(
+    String path, {
+    Map<String, dynamic>? data,
+    bool skipAuth = false,
+  }) async =>
+      _decodeMap(await _request('PATCH', path, data: data, skipAuth: skipAuth));
+
+  Future<Map<String, dynamic>> deleteMap(
+    String path, {
+    bool skipAuth = false,
+  }) async =>
+      _decodeMap(await _request('DELETE', path, skipAuth: skipAuth));
+
   // ---------------------------------------------------------------------------
   // Internals
   // ---------------------------------------------------------------------------

@@ -171,15 +171,82 @@ class ProposalsController extends FamilyAsyncNotifier<List<GroupProposal>, Strin
   }
 }
 
-/// Group members.
+/// Group members with add/role/remove actions (build spec §16).
 final groupMembersProvider =
-    FutureProvider.family<List<GroupMember>, String>((ref, groupId) async {
-  final result = await ref.read(groupsRepositoryProvider).getMembers(groupId);
-  return switch (result) {
-    Success<List<GroupMember>>(:final value) => value,
-    Failure<List<GroupMember>>(:final error) => throw error,
-  };
-});
+    AsyncNotifierProvider.family<MembersController, List<GroupMember>, String>(
+  MembersController.new,
+);
+
+class MembersController extends FamilyAsyncNotifier<List<GroupMember>, String> {
+  @override
+  Future<List<GroupMember>> build(String groupId) => _fetch(groupId);
+
+  Future<List<GroupMember>> _fetch(String groupId) async {
+    final result = await ref.read(groupsRepositoryProvider).getMembers(groupId);
+    return switch (result) {
+      Success<List<GroupMember>>(:final value) => value,
+      Failure<List<GroupMember>>(:final error) => throw error,
+    };
+  }
+
+  /// Mutations return `null` on success or the error message to show.
+  /// State is rebuilt from the repository after each mutation so the list
+  /// always mirrors the source of truth.
+  Future<String?> addMember({
+    required String groupId,
+    required String identifier,
+    required String actorId,
+  }) async {
+    final result = await ref.read(groupsRepositoryProvider).addMember(
+          groupId: groupId,
+          identifier: identifier,
+          actorId: actorId,
+        );
+    return switch (result) {
+      Success<GroupMember>() => _refetch(groupId),
+      Failure<GroupMember>(:final error) => error.message,
+    };
+  }
+
+  Future<String?> updateRole({
+    required String groupId,
+    required String memberId,
+    required String role,
+    required String actorId,
+  }) async {
+    final result = await ref.read(groupsRepositoryProvider).updateMemberRole(
+          groupId: groupId,
+          memberId: memberId,
+          role: role,
+          actorId: actorId,
+        );
+    return switch (result) {
+      Success<GroupMember>() => _refetch(groupId),
+      Failure<GroupMember>(:final error) => error.message,
+    };
+  }
+
+  Future<String?> removeMember({
+    required String groupId,
+    required String memberId,
+    required String actorId,
+  }) async {
+    final result = await ref.read(groupsRepositoryProvider).removeMember(
+          groupId: groupId,
+          memberId: memberId,
+          actorId: actorId,
+        );
+    return switch (result) {
+      Success<void>() => _refetch(groupId),
+      Failure<void>(:final error) => error.message,
+    };
+  }
+
+  Future<String?> _refetch(String groupId) async {
+    state = await AsyncValue.guard(() => _fetch(groupId));
+    return null;
+  }
+}
 
 /// Group chat messages with a send action (build spec §10).
 final groupMessagesProvider = AsyncNotifierProvider.family<

@@ -285,4 +285,128 @@ void main() {
           isA<ValidationException>());
     });
   });
+
+  group('MockGroupsRepository — member management (build spec §16)', () {
+    test('owner adds a member by phone', () async {
+      final result = await repo.addMember(
+        groupId: 'grp_weekend',
+        identifier: '0209998887',
+        actorId: MockGroupsRepository.currentUserId,
+      );
+
+      expect(result.isSuccess, isTrue);
+      final member = result.valueOrNull!;
+      expect(member.fullName, 'Adjoa Asante');
+      expect(member.role, GroupRoles.member);
+
+      final members =
+          (await repo.getMembers('grp_weekend')).valueOrNull!;
+      expect(members.any((m) => m.userId == 'usr_adjoa'), isTrue);
+    });
+
+    test('addMember rejects unknown phones and duplicates', () async {
+      final unknown = await repo.addMember(
+        groupId: 'grp_weekend',
+        identifier: '0200000000',
+        actorId: MockGroupsRepository.currentUserId,
+      );
+      expect(unknown.isFailure, isTrue);
+      expect((unknown as Failure<GroupMember>).error,
+          isA<NotFoundException>());
+
+      // Ama is already a member of Weekend Susu.
+      final duplicate = await repo.addMember(
+        groupId: 'grp_weekend',
+        identifier: '0559876543',
+        actorId: MockGroupsRepository.currentUserId,
+      );
+      expect(duplicate.isFailure, isTrue);
+      expect((duplicate as Failure<GroupMember>).error,
+          isA<ConflictException>());
+    });
+
+    test('addMember requires owner/moderator permission', () async {
+      // Kofi is a plain member.
+      final result = await repo.addMember(
+        groupId: 'grp_weekend',
+        identifier: '0209998887',
+        actorId: 'usr_kofi',
+      );
+      expect(result.isFailure, isTrue);
+      expect((result as Failure<GroupMember>).error,
+          isA<ForbiddenException>());
+    });
+
+    test('owner changes a member role', () async {
+      final result = await repo.updateMemberRole(
+        groupId: 'grp_weekend',
+        memberId: 'usr_kofi',
+        role: GroupRoles.treasurer,
+        actorId: MockGroupsRepository.currentUserId,
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(result.valueOrNull!.role, GroupRoles.treasurer);
+      final refreshed =
+          (await repo.getMembers('grp_weekend')).valueOrNull!;
+      expect(
+        refreshed.firstWhere((m) => m.userId == 'usr_kofi').role,
+        GroupRoles.treasurer,
+      );
+    });
+
+    test('role changes protect the owner and reject unknown roles', () async {
+      final ownerTarget = await repo.updateMemberRole(
+        groupId: 'grp_weekend',
+        memberId: MockGroupsRepository.currentUserId,
+        role: GroupRoles.member,
+        actorId: MockGroupsRepository.currentUserId,
+      );
+      expect(ownerTarget.isFailure, isTrue);
+      expect((ownerTarget as Failure<GroupMember>).error,
+          isA<ForbiddenException>());
+
+      final badRole = await repo.updateMemberRole(
+        groupId: 'grp_weekend',
+        memberId: 'usr_kofi',
+        role: 'KING',
+        actorId: MockGroupsRepository.currentUserId,
+      );
+      expect(badRole.isFailure, isTrue);
+      expect((badRole as Failure<GroupMember>).error,
+          isA<ValidationException>());
+    });
+
+    test('owner removes a member; self and owner removal are guarded',
+        () async {
+      final removed = await repo.removeMember(
+        groupId: 'grp_weekend',
+        memberId: 'usr_nana',
+        actorId: MockGroupsRepository.currentUserId,
+      );
+      expect(removed.isSuccess, isTrue);
+
+      final self = await repo.removeMember(
+        groupId: 'grp_weekend',
+        memberId: MockGroupsRepository.currentUserId,
+        actorId: MockGroupsRepository.currentUserId,
+      );
+      expect(self.isFailure, isTrue);
+      expect((self as Failure<void>).error, isA<ValidationException>());
+
+      // Restore Nana, then try to remove the owner as a moderator.
+      await repo.addMember(
+        groupId: 'grp_weekend',
+        identifier: '0243334445',
+        actorId: MockGroupsRepository.currentUserId,
+      );
+      final owner = await repo.removeMember(
+        groupId: 'grp_weekend',
+        memberId: MockGroupsRepository.currentUserId,
+        actorId: 'usr_ama',
+      );
+      expect(owner.isFailure, isTrue);
+      expect((owner as Failure<void>).error, isA<ForbiddenException>());
+    });
+  });
 }

@@ -8,6 +8,7 @@ import 'package:digital_susu/features/groups/data/mock_groups_repository.dart';
 import 'package:digital_susu/features/groups/domain/group_models.dart';
 import 'package:digital_susu/features/groups/presentation/providers/groups_providers.dart';
 import 'package:digital_susu/features/groups/presentation/screens/group_chat_tab.dart';
+import 'package:digital_susu/features/groups/presentation/screens/group_members_tab.dart';
 import 'package:digital_susu/features/groups/presentation/screens/group_overview_tab.dart';
 import 'package:digital_susu/features/groups/presentation/screens/group_proposals_tab.dart';
 import 'package:digital_susu/features/groups/presentation/screens/groups_screen.dart';
@@ -258,6 +259,45 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Contribution recorded 🎉'), findsOneWidget);
+    });
+  });
+
+  group('GroupMembersTab (build spec §16)', () {
+    testWidgets('renders members with roles and manage actions',
+        (tester) async {
+      await tester.pumpWidget(wrap(const GroupMembersTab(
+        groupId: 'grp_weekend',
+        currentUserId: MockGroupsRepository.currentUserId,
+      )));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Members (4)'), findsOneWidget);
+      expect(find.text('Kwame Owusu (You)'), findsOneWidget);
+      expect(find.text('Ama Serwaa'), findsOneWidget);
+      expect(find.text('Owner'), findsOneWidget);
+      expect(find.text('Treasurer'), findsOneWidget);
+      expect(find.text('Add Member'), findsOneWidget);
+    });
+
+    testWidgets('add member flow adds by phone number', (tester) async {
+      await tester.pumpWidget(wrap(const GroupMembersTab(
+        groupId: 'grp_weekend',
+        currentUserId: MockGroupsRepository.currentUserId,
+      )));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Add Member'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Add member'), findsOneWidget);
+      await tester.enterText(find.byType(TextField).last, '0209998887');
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Add'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Member added'), findsOneWidget);
+      expect(find.text('Adjoa Asante'), findsOneWidget);
+      expect(find.text('Members (5)'), findsOneWidget);
     });
   });
 

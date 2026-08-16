@@ -238,6 +238,7 @@ class ApiGroupsRepository implements GroupsRepository {
       // The vote endpoint returns { message }; re-fetch for the updated
       // proposal (votes + my_vote).
       final updated = await getProposals(groupId);
+
       switch (updated) {
         case Success<List<GroupProposal>>(:final value):
           for (final GroupProposal p in value) {
@@ -251,6 +252,55 @@ class ApiGroupsRepository implements GroupsRepository {
       }
     } on AppException catch (error) {
       return Failure<GroupProposal>(error);
+    }
+  }
+
+  @override
+  Future<Result<GroupMember>> addMember({
+    required String groupId,
+    required String identifier,
+    required String actorId,
+  }) async {
+    try {
+      final data = await _client.postMap(
+        ApiEndpoints.groupMembers(groupId),
+        data: <String, dynamic>{'identifier': identifier},
+      );
+      return Success<GroupMember>(GroupMember.fromJson(data));
+    } on AppException catch (error) {
+      return Failure<GroupMember>(error);
+    }
+  }
+
+  @override
+  Future<Result<GroupMember>> updateMemberRole({
+    required String groupId,
+    required String memberId,
+    required String role,
+    required String actorId,
+  }) async {
+    try {
+      final data = await _client.patchMap(
+        ApiEndpoints.groupMember(groupId, memberId),
+        data: <String, dynamic>{'role': role},
+      );
+      return Success<GroupMember>(GroupMember.fromJson(data));
+    } on AppException catch (error) {
+      return Failure<GroupMember>(error);
+    }
+  }
+
+  @override
+  Future<Result<void>> removeMember({
+    required String groupId,
+    required String memberId,
+    required String actorId,
+  }) async {
+    try {
+      await _client.deleteMap(ApiEndpoints.groupMember(groupId, memberId));
+      return const Success<void>(null);
+    } on AppException catch (error) {
+      return Failure<void>(error);
     }
   }
 
