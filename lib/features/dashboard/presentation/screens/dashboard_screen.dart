@@ -9,6 +9,7 @@ import '../../../../shared/widgets/app_states.dart';
 import '../../../authentication/presentation/providers/auth_providers.dart';
 import '../../domain/dashboard_models.dart';
 import '../providers/dashboard_providers.dart';
+import '../providers/elder_mode_provider.dart';
 import '../widgets/dashboard_widgets.dart';
 
 /// Home screen rebuilt to match the React "Digital Susu" design reference:
@@ -25,6 +26,7 @@ class DashboardScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final summaryAsync = ref.watch(dashboardSummaryProvider);
     final auth = ref.watch(authStateProvider);
+    final elderMode = ref.watch(elderModeProvider);
     final user = switch (auth) {
       AuthAuthenticated(:final session) => session.user,
       _ => null,
@@ -37,6 +39,8 @@ class DashboardScreen extends ConsumerWidget {
           HomeHeader(
             unread: unread,
             displayName: user?.fullName,
+            elderMode: elderMode,
+            onToggleElder: () => ref.read(elderModeProvider.notifier).toggle(),
             onNotificationsTap: () => context.go(AppRoutes.notifications),
             onProfileTap: () => context.go(AppRoutes.profile),
           ),
@@ -50,7 +54,15 @@ class DashboardScreen extends ConsumerWidget {
                 onRetry: () =>
                     ref.read(dashboardSummaryProvider.notifier).refresh(),
               ),
-              data: (summary) => RefreshIndicator(
+              data: (summary) => elderMode
+                  ? ElderDashboard(
+                      summary: summary,
+                      user: user,
+                      onDeposit: () => context.go(AppRoutes.wallet),
+                      onWithdraw: () => context.go(AppRoutes.wallet),
+                      onSend: () => context.go(AppRoutes.wallet),
+                    )
+                  : RefreshIndicator(
                 onRefresh: () =>
                     ref.read(dashboardSummaryProvider.notifier).refresh(),
                 child: ListView(

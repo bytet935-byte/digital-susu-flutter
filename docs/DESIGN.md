@@ -160,5 +160,13 @@ New Member Added.
   `GroupProposal` model + `getProposals`/`voteProposal` (mock persists
   votes; API against `GET/POST /groups/:id/proposals` + vote endpoint);
   8 new tests (mock voting rules, API contract, widget flows)
+- ✅ Member management — **build spec §16**: Members tab gains Add Member
+  (phone/email dialog), role changes (treasurer/moderator/member/admin)
+  and removal via per-member menu; actions gated by owner/moderator
+  permission with guards (self-removal, owner protection, unknown
+  phone/role); mock enforces rules, API against POST/PATCH/DELETE
+  `/groups/:id/members[...]` (`identifier`/`role` bodies); ApiClient
+  gained `patchMap`/`deleteMap`; state refetches from the repository
+  after mutations; 11 new tests
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

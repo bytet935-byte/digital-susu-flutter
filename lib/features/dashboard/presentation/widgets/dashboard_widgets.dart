@@ -29,12 +29,18 @@ class HomeHeader extends StatelessWidget {
     required this.onNotificationsTap,
     required this.onProfileTap,
     this.displayName,
+    this.elderMode = false,
+    this.onToggleElder,
   });
 
   final int unread;
   final VoidCallback onNotificationsTap;
   final VoidCallback onProfileTap;
   final String? displayName;
+
+  /// Elder-Friendly Mode (high-contrast, large-button dashboard).
+  final bool elderMode;
+  final VoidCallback? onToggleElder;
 
   String get _initials {
     final name = displayName?.trim() ?? '';
@@ -89,6 +95,19 @@ class HomeHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
+              if (onToggleElder != null)
+                IconButton(
+                  onPressed: onToggleElder,
+                  tooltip: elderMode
+                      ? 'Elder-friendly mode on'
+                      : 'Elder-friendly mode',
+                  icon: Icon(
+                    elderMode
+                        ? Icons.accessibility_new
+                        : Icons.accessibility_new_outlined,
+                    color: Colors.white,
+                  ),
+                ),
               IconButton(
                 onPressed: onNotificationsTap,
                 tooltip: 'Notifications',
@@ -182,6 +201,186 @@ class GreetingSection extends StatelessWidget {
         ),
         VerifiedBadge(verified: user?.kycStatus == 'VERIFIED'),
       ],
+    );
+  }
+}
+
+/// Elder-Friendly Mode dashboard (spec "Special Feature"): high-contrast,
+/// massive buttons and simplified text. Replaces the regular dashboard
+/// content when enabled.
+class ElderDashboard extends StatelessWidget {
+  const ElderDashboard({
+    super.key,
+    required this.summary,
+    required this.user,
+    required this.onDeposit,
+    required this.onWithdraw,
+    required this.onSend,
+  });
+
+  final DashboardSummary summary;
+  final User? user;
+  final VoidCallback onDeposit;
+  final VoidCallback onWithdraw;
+  final VoidCallback onSend;
+
+  String get _firstName {
+    final name = user?.fullName.trim() ?? '';
+    if (name.isEmpty) return 'there';
+    return name.split(RegExp(r'\s+')).first;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
+      children: <Widget>[
+        Text(
+          'Hello $_firstName',
+          style: theme.textTheme.headlineMedium?.copyWith(fontSize: 30),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'YOUR MONEY',
+          style: theme.textTheme.bodySmall?.copyWith(
+            letterSpacing: 1.5,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          _formatGhs(summary.totalBalance),
+          style: theme.textTheme.money.copyWith(
+            fontSize: 46,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 28),
+        _BigButton(
+          label: 'DEPOSIT',
+          icon: Icons.add_circle_outline,
+          onTap: onDeposit,
+          filled: true,
+        ),
+        const SizedBox(height: 14),
+        _BigButton(
+          label: 'WITHDRAW',
+          icon: Icons.arrow_upward,
+          onTap: onWithdraw,
+        ),
+        const SizedBox(height: 14),
+        _BigButton(
+          label: 'SEND',
+          icon: Icons.send,
+          onTap: onSend,
+        ),
+        const SizedBox(height: 28),
+        Text('MY GROUPS', style: theme.textTheme.bodySmall),
+        const SizedBox(height: 8),
+        for (final DashboardGroup group in summary.activeGroups.take(3))
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.outline),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    group.name,
+                    style: theme.textTheme.titleMedium?.copyWith(fontSize: 20),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Saved: ${_formatGhs(group.pot)}',
+                    style: theme.textTheme.bodyMedium?.copyWith(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        const SizedBox(height: 12),
+        Text('RECENT', style: theme.textTheme.bodySmall),
+        const SizedBox(height: 8),
+        for (final DashboardTransaction t in summary.recentTransactions.take(3))
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    t.description,
+                    style: theme.textTheme.bodyMedium?.copyWith(fontSize: 16),
+                  ),
+                ),
+                Text(
+                  _formatGhs(t.amount),
+                  style: theme.textTheme.emphasis.copyWith(
+                    fontSize: 16,
+                    color: t.isCredit
+                        ? AppColors.moneyPositive
+                        : AppColors.moneyNegative,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Massive full-width action button for Elder-Friendly Mode.
+class _BigButton extends StatelessWidget {
+  const _BigButton({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    this.filled = false,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget button = filled
+        ? FilledButton.icon(
+            onPressed: onTap,
+            icon: Icon(icon, size: 32),
+            label: Text(
+              label,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            ),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(68),
+              backgroundColor: AppColors.primary,
+            ),
+          )
+        : OutlinedButton.icon(
+            onPressed: onTap,
+            icon: Icon(icon, size: 32),
+            label: Text(
+              label,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            ),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(68),
+              side: const BorderSide(color: AppColors.primary, width: 2),
+              foregroundColor: AppColors.primary,
+            ),
+          );
+    return Semantics(
+      button: true,
+      label: label,
+      child: button,
     );
   }
 }

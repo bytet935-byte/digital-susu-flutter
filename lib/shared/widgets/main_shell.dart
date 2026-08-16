@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/routing/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../features/calculator/presentation/susu_calculator_sheet.dart';
+import '../../features/ussd/presentation/ussd_simulator.dart';
 
 /// Application shell with the design-reference navigation (spec §21, §31):
 /// Home · Groups · [+] · Wallet · Profile.
@@ -25,8 +27,56 @@ class MainShell extends StatelessWidget {
     );
   }
 
-  void _createSusu(BuildContext context) {
-    context.go(AppRoutes.groupCreate);
+  /// Quick-action hub (spec): Deposit, Create Susu, Susu Calculator and
+  /// USSD Mode, surfaced from the FAB / centre "+".
+  void _openHub(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.add_circle_outline),
+              title: const Text('Deposit'),
+              subtitle: const Text('Add money to your wallet'),
+              onTap: () {
+                Navigator.of(context).pop();
+                context.go(AppRoutes.wallet);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.groups_outlined),
+              title: const Text('Create Susu'),
+              subtitle: const Text('Start a new savings group'),
+              onTap: () {
+                Navigator.of(context).pop();
+                context.go(AppRoutes.groupCreate);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calculate_outlined),
+              title: const Text('Susu Calculator'),
+              subtitle: const Text('Estimate pots and cycles'),
+              onTap: () {
+                Navigator.of(context).pop();
+                showSusuCalculatorSheet(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.phone_android),
+              title: const Text('USSD Mode'),
+              subtitle: const Text('Use the app without a smartphone'),
+              onTap: () {
+                Navigator.of(context).pop();
+                showUssdSimulator(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -37,7 +87,7 @@ class MainShell extends StatelessWidget {
           return _DesktopShell(
             currentIndex: navigationShell.currentIndex,
             onSelect: _goBranch,
-            onCreate: () => _createSusu(context),
+            onCreate: () => _openHub(context),
             body: navigationShell,
           );
         }
@@ -46,7 +96,7 @@ class MainShell extends StatelessWidget {
           bottomNavigationBar: _BottomBar(
             currentIndex: navigationShell.currentIndex,
             onSelect: _goBranch,
-            onCreate: () => _createSusu(context),
+            onCreate: () => _openHub(context),
           ),
         );
       },
