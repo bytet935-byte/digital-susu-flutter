@@ -70,6 +70,8 @@ class SusuGroup extends Equatable {
     this.description = '',
     this.nextPayout,
     this.currency = 'GHS',
+    this.myContribution = const Money(0),
+    this.myTarget,
   });
 
   final String id;
@@ -84,6 +86,12 @@ class SusuGroup extends Equatable {
   final String description;
   final DateTime? nextPayout;
   final String currency;
+
+  /// My contributed amount so far (design reference screen 8 progress bar).
+  final Money myContribution;
+
+  /// My contribution target for the current cycle; `null` hides the bar.
+  final Money? myTarget;
 
   bool get isActive => status == GroupStatuses.active;
 
@@ -100,6 +108,12 @@ class SusuGroup extends Equatable {
             ? DateTime.tryParse(json['next_payout'] as String)
             : null,
         currency: json['currency'] as String? ?? 'GHS',
+        myContribution: json['my_contribution'] is int
+            ? Money(json['my_contribution'] as int)
+            : const Money(0),
+        myTarget: json['my_target'] is int
+            ? Money(json['my_target'] as int)
+            : null,
       );
 
   @override
@@ -114,6 +128,8 @@ class SusuGroup extends Equatable {
         description,
         nextPayout,
         currency,
+        myContribution,
+        myTarget,
       ];
 }
 

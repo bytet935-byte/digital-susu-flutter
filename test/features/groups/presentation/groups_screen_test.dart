@@ -67,6 +67,27 @@ void main() {
       expect(find.text('Choir Savings'), findsOneWidget);
     });
 
+    testWidgets('overview shows the my-contribution progress bar',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_weekend',
+        name: 'Weekend Susu',
+        type: GroupTypes.rotationalSusu,
+        status: GroupStatuses.active,
+        pot: Money(50000),
+        memberCount: 10,
+        totalMembers: 10,
+        myContribution: Money(15000),
+        myTarget: Money(50000),
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('My Contribution'), findsOneWidget);
+      expect(find.textContaining('150.00 of GH₵ 500.00'), findsOneWidget);
+      expect(find.text('30% of target'), findsOneWidget);
+    });
+
     testWidgets('Contribute Now opens the sheet and records a contribution',
         (tester) async {
       const group = SusuGroup(

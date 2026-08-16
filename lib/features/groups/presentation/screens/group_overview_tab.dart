@@ -48,6 +48,10 @@ class GroupOverviewTab extends ConsumerWidget {
             ),
           ),
         ),
+        if (group.myTarget != null && group.myTarget!.amountMinor > 0) ...<Widget>[
+          const SizedBox(height: 16),
+          _ContributionProgress(group: group),
+        ],
         const SizedBox(height: 20),
         // Contribution progress is driven by the contribution schedule
         // (Phase 7); the sheet below is the Phase 6 entry point.
@@ -106,6 +110,56 @@ class _StatRow extends StatelessWidget {
                     : theme.textTheme.emphasis,
               ),
         ],
+      ),
+    );
+  }
+}
+
+/// "My Contribution" progress bar (design reference screen 8).
+class _ContributionProgress extends StatelessWidget {
+  const _ContributionProgress({required this.group});
+
+  final SusuGroup group;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final target = group.myTarget!;
+    final progress =
+        target.amountMinor <= 0 ? 0.0 : group.myContribution.amountMinor / target.amountMinor;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('My Contribution', style: theme.textTheme.titleSmall),
+                Text(
+                  '${group.myContribution.format()} of ${target.format()}',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: progress.clamp(0.0, 1.0),
+                minHeight: 8,
+                backgroundColor: AppColors.background,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '${(progress.clamp(0.0, 1.0) * 100).round()}% of target',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
       ),
     );
   }

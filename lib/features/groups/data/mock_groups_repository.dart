@@ -21,6 +21,8 @@ class MockGroupsRepository implements GroupsRepository {
       totalMembers: 10,
       description: 'Weekly rotational susu — 10 members, GHS 100 per cycle.',
       nextPayout: DateTime(2026, 8, 25),
+      myContribution: const Money(15000),
+      myTarget: const Money(50000),
     ),
     SusuGroup(
       id: 'grp_project',
@@ -32,6 +34,8 @@ class MockGroupsRepository implements GroupsRepository {
       totalMembers: 15,
       description: 'Saving towards the end-of-year project.',
       nextPayout: DateTime(2026, 9, 10),
+      myContribution: const Money(7500),
+      myTarget: const Money(75000),
     ),
     SusuGroup(
       id: 'grp_business',
@@ -43,6 +47,8 @@ class MockGroupsRepository implements GroupsRepository {
       totalMembers: 20,
       description: 'Joint business capital — 20 members.',
       nextPayout: DateTime(2026, 10, 5),
+      myContribution: const Money(24000),
+      myTarget: const Money(120000),
     ),
     const SusuGroup(
       id: 'grp_completed',
@@ -289,6 +295,8 @@ class MockGroupsRepository implements GroupsRepository {
       description: group.description,
       nextPayout: group.nextPayout,
       currency: group.currency,
+      myContribution: group.myContribution + amount,
+      myTarget: group.myTarget,
     );
     return Success<GroupContribution>(
       GroupContribution(

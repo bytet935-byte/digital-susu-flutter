@@ -87,6 +87,8 @@ void main() {
     test('contribute adds to the pot and returns a receipt', () async {
       final before = (await repo.getGroup('grp_weekend')).valueOrNull!;
       expect(before.pot, const Money(50000));
+      expect(before.myContribution, const Money(15000));
+      expect(before.myTarget, const Money(50000));
 
       final result = await repo.contribute(
         groupId: 'grp_weekend',
@@ -103,6 +105,7 @@ void main() {
 
       final after = (await repo.getGroup('grp_weekend')).valueOrNull!;
       expect(after.pot, const Money(55000));
+      expect(after.myContribution, const Money(20000));
     });
 
     test('contribute rejects invalid amounts and unknown groups', () async {
