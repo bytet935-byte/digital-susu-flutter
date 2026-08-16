@@ -308,4 +308,22 @@ class MockGroupsRepository implements GroupsRepository {
       ),
     );
   }
+
+  static const Map<String, String> _inviteCodes = <String, String>{
+    'grp_weekend': 'SUSU-4821',
+    'grp_project': 'SUSU-7395',
+    'grp_business': 'SUSU-2106',
+    'grp_completed': 'SUSU-4470',
+  };
+
+  @override
+  Future<Result<String>> getInviteCode(String groupId) async {
+    final code = _inviteCodes[groupId];
+    if (code == null) {
+      return const Failure<String>(
+        NotFoundException(message: 'Group not found.'),
+      );
+    }
+    return Success<String>(code);
+  }
 }

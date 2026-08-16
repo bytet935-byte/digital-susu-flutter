@@ -64,7 +64,7 @@ Node.js + TypeScript + Express + PostgreSQL (build spec §23–§26). See
 [server/README.md](server/README.md) — layered Routes → Controllers →
 Services → Repositories; full domain schema in `server/database/schema.sql`;
 runs in-memory without a database and on PostgreSQL when `DATABASE_URL` is set.
-**Verified: typecheck clean, 18/18 tests pass, production build + live smoke
+**Verified: typecheck clean, 26/26 tests pass, production build + live smoke
 test succeed.**
 
 ## Project structure

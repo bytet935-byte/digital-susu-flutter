@@ -159,6 +159,19 @@ class ApiGroupsRepository implements GroupsRepository {
     }
   }
 
+  @override
+  Future<Result<String>> getInviteCode(String groupId) async {
+    try {
+      final data = await _client.getMap(ApiEndpoints.group(groupId));
+      final code = data['invite_code'];
+      if (code is String && code.isNotEmpty) return Success<String>(code);
+      // Stable derived fallback until the server returns invite_code.
+      return Success<String>('G${groupId.toUpperCase()}');
+    } on AppException catch (error) {
+      return Failure<String>(error);
+    }
+  }
+
   /// Maps a server group payload (wallet/contribution fields aggregated by
   /// the backend) onto the app's SusuGroup model.
   SusuGroup _mapGroup(Map<String, dynamic> json) {

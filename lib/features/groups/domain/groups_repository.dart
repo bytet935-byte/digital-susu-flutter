@@ -34,4 +34,7 @@ abstract interface class GroupsRepository {
     required String paymentMethod,
     required String idempotencyKey,
   });
+
+  /// Invite code used by the join-by-code flow (design reference Invite).
+  Future<Result<String>> getInviteCode(String groupId);
 }

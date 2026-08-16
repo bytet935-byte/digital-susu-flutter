@@ -218,9 +218,17 @@ PostgreSQL layered backend; database schema; security engineering; tests.
   compiles; live smoke test (register → login → top-up → wallet → txns)
   passes.
 
-**Known gaps for later phases:** notification/payout/schedule services,
-chat/voting endpoints, admin module, PostgreSQL integration tests (need a
-running database), real SMS/payment providers behind the same seams.
+**Delivered since (batch 2, verified):** group chat (membership-gated send/
+list; announcements require moderator+), notification center (list, unread
+count, mark read/all — wallet top-ups/withdrawals/contributions emit
+notifications; contributions notify the group owner), governance proposals +
+**single-vote** enforcement (one vote per user, OPEN-period checks, invalid
+option rejection, membership gating). Suite: **26/26 tests pass**, typecheck
+clean, build compiles.
+
+**Known gaps for later phases:** payout/schedule services, admin module,
+PostgreSQL integration tests (need a running database), real SMS/payment
+providers behind the same seams.
 
 ---
 
