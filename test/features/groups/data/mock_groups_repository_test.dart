@@ -192,4 +192,28 @@ void main() {
           isA<NotFoundException>());
     });
   });
+
+  group('MockGroupsRepository — business report (Phase 7)', () {
+    test('returns the period report for joint-business groups', () async {
+      final result = await repo.getBusinessReport('grp_business');
+
+      expect(result.isSuccess, isTrue);
+      final report = result.valueOrNull!;
+      expect(report.capital, const Money(120000));
+      expect(report.revenue, const Money(48000));
+      expect(report.expenses, const Money(-31500));
+      expect(report.profit, const Money(16500));
+      expect(report.recentActivity, hasLength(6));
+      expect(report.recentActivity.first.description, 'Week 33 sales');
+      expect(report.recentActivity.first.isCredit, isTrue);
+      expect(report.recentActivity[1].isCredit, isFalse);
+    });
+
+    test('fails for non-joint-business group types', () async {
+      final result = await repo.getBusinessReport('grp_weekend');
+      expect(result, isA<Failure<BusinessReport>>());
+      expect((result as Failure<BusinessReport>).error,
+          isA<NotFoundException>());
+    });
+  });
 }

@@ -61,6 +61,10 @@ class GroupOverviewTab extends ConsumerWidget {
           const SizedBox(height: 16),
           _SavingsGoalCard(groupId: group.id, pot: group.pot),
         ],
+        if (group.type == GroupTypes.jointBusiness) ...<Widget>[
+          const SizedBox(height: 16),
+          _BusinessReportCard(groupId: group.id),
+        ],
         const SizedBox(height: 20),
         // Contribution progress is driven by the contribution schedule
         // (Phase 7); the sheet below is the Phase 6 entry point.
@@ -421,6 +425,152 @@ class _GoalCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Joint-business period report (Phase 7): capital, revenue / expenses /
+/// profit and the latest activity. Hidden when no report is available.
+class _BusinessReportCard extends ConsumerWidget {
+  const _BusinessReportCard({required this.groupId});
+
+  final String groupId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reportAsync = ref.watch(businessReportProvider(groupId));
+    return reportAsync.when(
+      loading: () => const SizedBox(height: 80),
+      error: (error, stackTrace) => const SizedBox.shrink(),
+      data: (report) => _ReportCard(report: report),
+    );
+  }
+}
+
+class _ReportCard extends StatelessWidget {
+  const _ReportCard({required this.report});
+
+  final BusinessReport report;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Business Report', style: theme.textTheme.titleSmall),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '${report.capital.format()} capital',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: _Stat(
+                    label: 'Revenue',
+                    value: report.revenue.format(),
+                    color: AppColors.moneyPositive,
+                  ),
+                ),
+                Expanded(
+                  child: _Stat(
+                    label: 'Expenses',
+                    value: report.expenses.format(),
+                    color: AppColors.moneyNegative,
+                  ),
+                ),
+                Expanded(
+                  child: _Stat(
+                    label: 'Profit',
+                    value: report.profit.format(),
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
+            Text('Recent activity', style: theme.textTheme.titleSmall),
+            const SizedBox(height: 4),
+            for (final BusinessEntry entry in report.recentActivity.take(4))
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      entry.isCredit
+                          ? Icons.trending_up
+                          : Icons.trending_down,
+                      size: 16,
+                      color: entry.isCredit
+                          ? AppColors.moneyPositive
+                          : AppColors.moneyNegative,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        entry.description,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    Text(
+                      entry.amount.format(),
+                      style: theme.textTheme.emphasis.copyWith(
+                        color: entry.isCredit
+                            ? AppColors.moneyPositive
+                            : AppColors.moneyNegative,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Stat extends StatelessWidget {
+  const _Stat({required this.label, required this.value, required this.color});
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(label, style: theme.textTheme.bodySmall),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: theme.textTheme.emphasis.copyWith(color: color),
+        ),
+      ],
     );
   }
 }

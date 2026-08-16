@@ -137,6 +137,11 @@ New Member Added.
   GHS 1,000 payouts, upcoming rotation); overview "Payout Schedule" card
   (cycle progress + next payout recipient + upcoming turns); hidden for
   non-rotational groups and in API mode until the backend endpoint lands
-- ⏳ Savings-goal milestones / joint-business reports — Phase 7
+- ✅ Savings-goal milestones — **Phase 7**: `SavingsGoal` + `GoalMilestone`
+  models; mock goal for Project Susu (GHS 2,000 target by 10 Sep, 25/50/
+  75/100% ladder); overview "Goal Progress" card (pot vs goal, target
+  date, milestone checks derived from the pot); hidden for other group
+  types and in API mode until the backend endpoint lands
+- ⏳ Joint-business reports — Phase 7
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

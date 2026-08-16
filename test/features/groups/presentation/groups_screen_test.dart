@@ -173,6 +173,46 @@ void main() {
       expect(find.text('Goal Progress'), findsNothing);
     });
 
+    testWidgets('joint-business groups show the business report card',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_business',
+        name: 'Business Susu',
+        type: GroupTypes.jointBusiness,
+        status: GroupStatuses.active,
+        pot: Money(120000),
+        memberCount: 20,
+        totalMembers: 20,
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Business Report'), findsOneWidget);
+      expect(find.text('GH₵ 1,200.00 capital'), findsOneWidget);
+      expect(find.text('Revenue'), findsOneWidget);
+      expect(find.text('GH₵ 480.00'), findsOneWidget);
+      expect(find.text('GH₵ -315.00'), findsOneWidget);
+      expect(find.text('GH₵ 165.00'), findsOneWidget);
+      expect(find.text('Week 33 sales'), findsOneWidget);
+    });
+
+    testWidgets('rotational groups hide the business report card',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_weekend',
+        name: 'Weekend Susu',
+        type: GroupTypes.rotationalSusu,
+        status: GroupStatuses.active,
+        pot: Money(50000),
+        memberCount: 10,
+        totalMembers: 10,
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Business Report'), findsNothing);
+    });
+
     testWidgets('savings-goal groups hide the payout schedule card',
         (tester) async {
       const group = SusuGroup(

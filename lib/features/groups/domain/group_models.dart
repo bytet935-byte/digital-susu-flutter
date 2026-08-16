@@ -302,3 +302,50 @@ class GoalMilestone extends Equatable {
   @override
   List<Object?> get props => <Object?>[label, percent, amount];
 }
+
+/// Joint-business period report (Phase 7): committed capital, revenue and
+/// expenses for the period, plus the latest business activity.
+class BusinessReport extends Equatable {
+  const BusinessReport({
+    required this.capital,
+    required this.revenue,
+    required this.expenses,
+    required this.recentActivity,
+  });
+
+  final Money capital;
+
+  /// Credits this period (sales, service income, …).
+  final Money revenue;
+
+  /// Debits this period (stock, logistics, marketing, …) — negative.
+  final Money expenses;
+  final List<BusinessEntry> recentActivity;
+
+  /// Expenses are stored negative, so profit is revenue + expenses.
+  Money get profit => revenue + expenses;
+
+  @override
+  List<Object?> get props =>
+      <Object?>[capital, revenue, expenses, recentActivity];
+}
+
+/// One business activity entry (Phase 7).
+class BusinessEntry extends Equatable {
+  const BusinessEntry({
+    required this.description,
+    required this.amount,
+    required this.timestamp,
+  });
+
+  final String description;
+
+  /// Negative for expenses.
+  final Money amount;
+  final DateTime timestamp;
+
+  bool get isCredit => amount.amountMinor >= 0;
+
+  @override
+  List<Object?> get props => <Object?>[description, amount, timestamp];
+}

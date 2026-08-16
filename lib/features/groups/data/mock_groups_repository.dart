@@ -411,4 +411,55 @@ class MockGroupsRepository implements GroupsRepository {
       ),
     );
   }
+
+  @override
+  Future<Result<BusinessReport>> getBusinessReport(String groupId) async {
+    // Only joint-business groups carry a period report (Phase 7).
+    if (groupId != 'grp_business') {
+      return const Failure<BusinessReport>(
+        NotFoundException(
+          message: 'No business report for this group type.',
+        ),
+      );
+    }
+    return Success<BusinessReport>(
+      BusinessReport(
+        capital: const Money(120000),
+        revenue: const Money(48000),
+        expenses: const Money(-31500),
+        recentActivity: <BusinessEntry>[
+          BusinessEntry(
+            description: 'Week 33 sales',
+            amount: const Money(28000),
+            timestamp: DateTime(2026, 8, 14, 17, 30),
+          ),
+          BusinessEntry(
+            description: 'Stock purchase',
+            amount: const Money(-15000),
+            timestamp: DateTime(2026, 8, 13, 10, 15),
+          ),
+          BusinessEntry(
+            description: 'Service income',
+            amount: const Money(20000),
+            timestamp: DateTime(2026, 8, 12, 14, 40),
+          ),
+          BusinessEntry(
+            description: 'Transport & logistics',
+            amount: const Money(-6500),
+            timestamp: DateTime(2026, 8, 11, 9, 5),
+          ),
+          BusinessEntry(
+            description: 'Marketing spend',
+            amount: const Money(-10000),
+            timestamp: DateTime(2026, 8, 10, 16, 20),
+          ),
+          BusinessEntry(
+            description: 'Week 32 sales',
+            amount: const Money(12000),
+            timestamp: DateTime(2026, 8, 7, 17, 45),
+          ),
+        ],
+      ),
+    );
+  }
 }

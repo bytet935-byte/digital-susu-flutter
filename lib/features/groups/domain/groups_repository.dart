@@ -45,4 +45,8 @@ abstract interface class GroupsRepository {
   /// Savings goal for savings-goal groups (Phase 7); other group types
   /// fail and the UI hides the card.
   Future<Result<SavingsGoal>> getSavingsGoal(String groupId);
+
+  /// Period report for joint-business groups (Phase 7); other group types
+  /// fail and the UI hides the card.
+  Future<Result<BusinessReport>> getBusinessReport(String groupId);
 }

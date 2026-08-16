@@ -115,6 +115,18 @@ final savingsGoalProvider =
   };
 });
 
+/// Joint-business period report (Phase 7); fails gracefully for other
+/// group types and in API mode (card hidden).
+final businessReportProvider =
+    FutureProvider.family<BusinessReport, String>((ref, groupId) async {
+  final result =
+      await ref.read(groupsRepositoryProvider).getBusinessReport(groupId);
+  return switch (result) {
+    Success<BusinessReport>(:final value) => value,
+    Failure<BusinessReport>(:final error) => throw error,
+  };
+});
+
 /// Group members.
 final groupMembersProvider =
     FutureProvider.family<List<GroupMember>, String>((ref, groupId) async {

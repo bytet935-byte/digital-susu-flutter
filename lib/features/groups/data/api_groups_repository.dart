@@ -194,6 +194,17 @@ class ApiGroupsRepository implements GroupsRepository {
     );
   }
 
+  @override
+  Future<Result<BusinessReport>> getBusinessReport(String groupId) async {
+    // A dedicated susu-systems endpoint lands with the backend Phase 7
+    // work; until then the card stays hidden in API mode.
+    return const Failure<BusinessReport>(
+      NotFoundException(
+        message: 'Business reports are not available in API mode yet.',
+      ),
+    );
+  }
+
   /// Maps a server group payload (wallet/contribution fields aggregated by
   /// the backend) onto the app's SusuGroup model.
   SusuGroup _mapGroup(Map<String, dynamic> json) {
