@@ -49,4 +49,14 @@ abstract interface class GroupsRepository {
   /// Period report for joint-business groups (Phase 7); other group types
   /// fail and the UI hides the card.
   Future<Result<BusinessReport>> getBusinessReport(String groupId);
+
+  /// Governance proposals for a group (spec §20); empty list when none.
+  Future<Result<List<GroupProposal>>> getProposals(String groupId);
+
+  /// Records the current user's vote; returns the updated proposal.
+  Future<Result<GroupProposal>> voteProposal({
+    required String groupId,
+    required String proposalId,
+    required String option,
+  });
 }

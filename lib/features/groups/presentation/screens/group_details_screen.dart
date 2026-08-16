@@ -6,12 +6,13 @@ import '../../../../shared/widgets/app_states.dart';
 import '../../../authentication/presentation/providers/auth_providers.dart';
 import '../../domain/group_models.dart';
 import '../providers/groups_providers.dart';
+import 'group_proposals_tab.dart';
 import 'group_chat_tab.dart';
 import 'group_members_tab.dart';
 import 'group_overview_tab.dart';
 
 /// Group details screen (build spec §9): header + Overview / Members / Chat
-/// tabs, matching the design reference "Susu Details".
+/// / Proposals tabs, matching the design reference "Susu Details".
 class GroupDetailsScreen extends ConsumerWidget {
   const GroupDetailsScreen({super.key, required this.groupId});
 
@@ -55,6 +56,7 @@ class GroupDetailsScreen extends ConsumerWidget {
                   Tab(text: 'Overview'),
                   Tab(text: 'Members'),
                   Tab(text: 'Chat'),
+                  Tab(text: 'Proposals'),
                 ],
               ),
             ),
@@ -63,6 +65,7 @@ class GroupDetailsScreen extends ConsumerWidget {
                 GroupOverviewTab(group: group),
                 GroupMembersTab(groupId: group.id, currentUserId: currentUserId),
                 GroupChatTab(groupId: group.id, currentUserId: currentUserId),
+                GroupProposalsTab(groupId: group.id),
               ],
             ),
           ),

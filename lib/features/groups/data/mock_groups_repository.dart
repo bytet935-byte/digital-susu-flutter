@@ -316,6 +316,40 @@ class MockGroupsRepository implements GroupsRepository {
     'grp_completed': 'SUSU-4470',
   };
 
+  /// Governance proposals per group (spec §20) — mutable so votes persist.
+  final Map<String, List<GroupProposal>> _proposals = <String, List<GroupProposal>>{
+    'grp_weekend': <GroupProposal>[
+      GroupProposal(
+        id: 'prop_1',
+        groupId: 'grp_weekend',
+        title: 'Move payout day to Saturday',
+        description:
+            'Shift weekly payouts from Tuesday to Saturday for easier '
+            'collections.',
+        status: ProposalStatuses.open,
+        options: const <String>['Approve', 'Decline'],
+        votes: const <String, int>{'Approve': 6, 'Decline': 4},
+        votingEnds: DateTime(2026, 8, 22),
+        createdAt: DateTime(2026, 8, 15),
+        createdByName: 'Kwame Owusu',
+      ),
+      GroupProposal(
+        id: 'prop_2',
+        groupId: 'grp_weekend',
+        title: 'Raise contribution to GHS 150',
+        description:
+            'Increase the weekly contribution from GHS 100 to GHS 150.',
+        status: ProposalStatuses.passed,
+        options: const <String>['Approve', 'Decline'],
+        votes: const <String, int>{'Approve': 9, 'Decline': 1},
+        result: 'Approve',
+        votingEnds: DateTime(2026, 8, 8),
+        createdAt: DateTime(2026, 8, 1),
+        createdByName: 'Ama Serwaa',
+      ),
+    ],
+  };
+
   @override
   Future<Result<String>> getInviteCode(String groupId) async {
     final code = _inviteCodes[groupId];
@@ -461,5 +495,48 @@ class MockGroupsRepository implements GroupsRepository {
         ],
       ),
     );
+  }
+
+  @override
+  Future<Result<List<GroupProposal>>> getProposals(String groupId) async =>
+      Success<List<GroupProposal>>(
+        List<GroupProposal>.of(_proposals[groupId] ?? const <GroupProposal>[]),
+      );
+
+  @override
+  Future<Result<GroupProposal>> voteProposal({
+    required String groupId,
+    required String proposalId,
+    required String option,
+  }) async {
+    final list = _proposals[groupId];
+    if (list == null) {
+      return const Failure<GroupProposal>(
+        NotFoundException(message: 'Group not found.'),
+      );
+    }
+    final index = list.indexWhere((GroupProposal p) => p.id == proposalId);
+    if (index == -1) {
+      return const Failure<GroupProposal>(
+        NotFoundException(message: 'Proposal not found.'),
+      );
+    }
+    final proposal = list[index];
+    if (!proposal.isOpen) {
+      return const Failure<GroupProposal>(
+        ConflictException(message: 'Voting has closed for this proposal.'),
+      );
+    }
+    if (!proposal.options.contains(option)) {
+      return const Failure<GroupProposal>(
+        ValidationException(message: 'Unknown voting option.'),
+      );
+    }
+    final votes = Map<String, int>.from(proposal.votes);
+    votes[option] = (votes[option] ?? 0) + 1;
+    final updated =
+        proposal.copyWith(votes: votes, myVote: option);
+    list[index] = updated;
+    return Success<GroupProposal>(updated);
   }
 }

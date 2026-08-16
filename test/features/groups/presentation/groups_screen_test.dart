@@ -9,6 +9,7 @@ import 'package:digital_susu/features/groups/domain/group_models.dart';
 import 'package:digital_susu/features/groups/presentation/providers/groups_providers.dart';
 import 'package:digital_susu/features/groups/presentation/screens/group_chat_tab.dart';
 import 'package:digital_susu/features/groups/presentation/screens/group_overview_tab.dart';
+import 'package:digital_susu/features/groups/presentation/screens/group_proposals_tab.dart';
 import 'package:digital_susu/features/groups/presentation/screens/groups_screen.dart';
 import 'package:digital_susu/shared/models/money.dart';
 
@@ -257,6 +258,35 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Contribution recorded 🎉'), findsOneWidget);
+    });
+  });
+
+  group('GroupProposalsTab (build spec §16)', () {
+    testWidgets('renders proposals with vote counts and voting buttons',
+        (tester) async {
+      await tester.pumpWidget(wrap(const GroupProposalsTab(groupId: 'grp_weekend')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Move payout day to Saturday'), findsOneWidget);
+      expect(find.text('Raise contribution to GHS 150'), findsOneWidget);
+      expect(find.text('Open'), findsOneWidget);
+      expect(find.text('Passed'), findsOneWidget);
+      expect(find.text('6 votes'), findsOneWidget);
+      expect(find.text('Approve'), findsWidgets);
+      expect(find.text('Decline'), findsWidgets);
+    });
+
+    testWidgets('voting records the vote and shows the confirmation',
+        (tester) async {
+      await tester.pumpWidget(wrap(const GroupProposalsTab(groupId: 'grp_weekend')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Approve').first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Vote recorded'), findsOneWidget);
+      expect(find.text('You voted: Approve'), findsOneWidget);
+      expect(find.text('7 votes'), findsOneWidget);
     });
   });
 

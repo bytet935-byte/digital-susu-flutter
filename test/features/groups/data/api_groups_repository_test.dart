@@ -96,4 +96,67 @@ void main() {
       expect(result.valueOrNull!.senderName, 'Kwame Owusu');
     });
   });
+
+  group('ApiGroupsRepository — governance (spec §20)', () {
+    const proposalRow = <String, dynamic>{
+      'id': 'prop_1',
+      'group_id': 'grp_weekend',
+      'title': 'Move payout day to Saturday',
+      'description': 'Shift weekly payouts.',
+      'status': 'OPEN',
+      'options': <String>['Approve', 'Decline'],
+      'votes': <String, int>{'Approve': 6, 'Decline': 4},
+      'voting_ends': '2026-08-22T00:00:00.000Z',
+      'created_at': '2026-08-15T10:00:00.000Z',
+      'created_by_name': 'Kwame Owusu',
+    };
+
+    test('getProposals parses the {proposals:[...]} wrapper', () async {
+      await tokenStore.saveTokens(accessToken: 'at-1', refreshToken: 'rt-1');
+      adapter.handler = (options) async {
+        expect(options.path, '/groups/grp_weekend/proposals');
+        expect(options.method, 'GET');
+        return jsonBody(
+          <String, dynamic>{'proposals': <Object?>[proposalRow]},
+          200,
+        );
+      };
+
+      final result = await repo.getProposals('grp_weekend');
+
+      expect(result.isSuccess, isTrue);
+      final proposals = result.valueOrNull!;
+      expect(proposals, hasLength(1));
+      expect(proposals.first.title, 'Move payout day to Saturday');
+      expect(proposals.first.votes['Approve'], 6);
+      expect(proposals.first.totalVotes, 10);
+    });
+
+    test('vote posts the option and re-fetches the updated proposal',
+        () async {
+      await tokenStore.saveTokens(accessToken: 'at-1', refreshToken: 'rt-1');
+      adapter.handler = (options) async {
+        if (options.method == 'POST') {
+          expect(options.path, '/groups/grp_weekend/proposals/prop_1/vote');
+          expect((options.data as Map<String, dynamic>)['option'], 'Approve');
+          return jsonBody(<String, dynamic>{'message': 'Vote recorded'}, 201);
+        }
+        expect(options.path, '/groups/grp_weekend/proposals');
+        return jsonBody(<String, dynamic>{
+          'proposals': <Object?>[
+            <String, dynamic>{...proposalRow, 'votes': <String, int>{'Approve': 7, 'Decline': 4}},
+          ],
+        }, 200);
+      };
+
+      final result = await repo.voteProposal(
+        groupId: 'grp_weekend',
+        proposalId: 'prop_1',
+        option: 'Approve',
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(result.valueOrNull!.votes['Approve'], 7);
+    });
+  });
 }

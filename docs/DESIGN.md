@@ -148,5 +148,11 @@ New Member Added.
   overview "Business Report" card (capital chip, revenue/expenses/profit
   stats, recent activity); hidden for other group types and in API mode
   until the backend endpoint lands — **Phase 7 complete**
+- ✅ API mode aligned with the live backend — chat (`{messages:[...]}`
+  wrapper, POST returns the created message), notifications
+  (`{notifications, unread_count}` wrapper, `POST /notifications/:id/read`,
+  `POST /notifications/read-all`), plus governance + member endpoint
+  constants (`/proposals`, `/proposals/:id/vote`, member add/remove/role);
+  adapter tests cover the real response shapes
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

@@ -349,3 +349,117 @@ class BusinessEntry extends Equatable {
   @override
   List<Object?> get props => <Object?>[description, amount, timestamp];
 }
+
+/// Proposal statuses (spec §20, build spec §16).
+abstract final class ProposalStatuses {
+  static const String open = 'OPEN';
+  static const String passed = 'PASSED';
+  static const String rejected = 'REJECTED';
+}
+
+/// A governance proposal with per-option vote counts (spec §20, build
+/// spec §16; backend `GET/POST /groups/:id/proposals`).
+class GroupProposal extends Equatable {
+  const GroupProposal({
+    required this.id,
+    required this.groupId,
+    required this.title,
+    this.description = '',
+    required this.status,
+    required this.options,
+    this.votes = const <String, int>{},
+    this.result,
+    this.votingEnds,
+    required this.createdAt,
+    this.createdByName,
+    this.myVote,
+  });
+
+  final String id;
+  final String groupId;
+  final String title;
+  final String description;
+  final String status;
+
+  /// Vote options, e.g. `['Approve', 'Decline']`.
+  final List<String> options;
+  final Map<String, int> votes;
+
+  /// Winning option once voting closes.
+  final String? result;
+  final DateTime? votingEnds;
+  final DateTime createdAt;
+  final String? createdByName;
+
+  /// The current user's vote option, when they have voted.
+  final String? myVote;
+
+  bool get isOpen => status == ProposalStatuses.open;
+
+  int get totalVotes => votes.values.fold(0, (int sum, int count) => sum + count);
+
+  GroupProposal copyWith({
+    String? status,
+    Map<String, int>? votes,
+    String? result,
+    String? myVote,
+  }) =>
+      GroupProposal(
+        id: id,
+        groupId: groupId,
+        title: title,
+        description: description,
+        status: status ?? this.status,
+        options: options,
+        votes: votes ?? this.votes,
+        result: result ?? this.result,
+        votingEnds: votingEnds,
+        createdAt: createdAt,
+        createdByName: createdByName,
+        myVote: myVote ?? this.myVote,
+      );
+
+  factory GroupProposal.fromJson(Map<String, dynamic> json) => GroupProposal(
+        id: json['id'] as String,
+        groupId: json['group_id'] as String? ?? '',
+        title: json['title'] as String? ?? '',
+        description: json['description'] as String? ?? '',
+        status: json['status'] as String? ?? ProposalStatuses.open,
+        options: (json['options'] as List<dynamic>? ?? <dynamic>[])
+            .map((Object? o) => o.toString())
+            .toList(),
+        votes: json['votes'] is Map<String, dynamic>
+            ? (json['votes'] as Map<String, dynamic>).map(
+                (String k, Object? v) => MapEntry<String, int>(
+                  k,
+                  v is int ? v : 0,
+                ),
+              )
+            : const <String, int>{},
+        result: json['result'] as String?,
+        votingEnds: json['voting_ends'] is String
+            ? DateTime.tryParse(json['voting_ends'] as String)
+            : null,
+        createdAt: json['created_at'] is String
+            ? DateTime.tryParse(json['created_at'] as String) ?? DateTime.now()
+            : DateTime.now(),
+        createdByName: json['created_by_name'] as String?,
+        myVote: json['my_vote'] as String?,
+      );
+
+  @override
+  List<Object?> get props => <Object?>[
+        id,
+        groupId,
+        title,
+        description,
+        status,
+        options,
+        votes,
+        result,
+        votingEnds,
+        createdAt,
+        createdByName,
+        myVote,
+      ];
+}

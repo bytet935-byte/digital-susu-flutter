@@ -216,4 +216,73 @@ void main() {
           isA<NotFoundException>());
     });
   });
+
+  group('MockGroupsRepository — governance (spec §20)', () {
+    test('returns proposals with vote counts, newest first', () async {
+      final result = await repo.getProposals('grp_weekend');
+
+      expect(result.isSuccess, isTrue);
+      final proposals = result.valueOrNull!;
+      expect(proposals, hasLength(2));
+      expect(proposals.first.title, 'Move payout day to Saturday');
+      expect(proposals.first.isOpen, isTrue);
+      expect(proposals.first.votes['Approve'], 6);
+      expect(proposals.first.votes['Decline'], 4);
+      expect(proposals.first.totalVotes, 10);
+      expect(proposals[1].status, ProposalStatuses.passed);
+    });
+
+    test('returns an empty list for groups without proposals', () async {
+      final result = await repo.getProposals('grp_project');
+      expect(result.isSuccess, isTrue);
+      expect(result.valueOrNull, isEmpty);
+    });
+
+    test('vote increments the option count and records my vote', () async {
+      final result = await repo.voteProposal(
+        groupId: 'grp_weekend',
+        proposalId: 'prop_1',
+        option: 'Approve',
+      );
+
+      expect(result.isSuccess, isTrue);
+      final proposal = result.valueOrNull!;
+      expect(proposal.votes['Approve'], 7);
+      expect(proposal.myVote, 'Approve');
+      // Persisted for the next read.
+      final refreshed = (await repo.getProposals('grp_weekend')).valueOrNull!;
+      expect(refreshed.first.votes['Approve'], 7);
+      expect(refreshed.first.myVote, 'Approve');
+    });
+
+    test('rejects votes on closed proposals, unknown ids and options',
+        () async {
+      final closed = await repo.voteProposal(
+        groupId: 'grp_weekend',
+        proposalId: 'prop_2',
+        option: 'Approve',
+      );
+      expect(closed.isFailure, isTrue);
+      expect((closed as Failure<GroupProposal>).error,
+          isA<ConflictException>());
+
+      final missing = await repo.voteProposal(
+        groupId: 'grp_weekend',
+        proposalId: 'prop_nope',
+        option: 'Approve',
+      );
+      expect(missing.isFailure, isTrue);
+      expect((missing as Failure<GroupProposal>).error,
+          isA<NotFoundException>());
+
+      final badOption = await repo.voteProposal(
+        groupId: 'grp_weekend',
+        proposalId: 'prop_1',
+        option: 'Maybe',
+      );
+      expect(badOption.isFailure, isTrue);
+      expect((badOption as Failure<GroupProposal>).error,
+          isA<ValidationException>());
+    });
+  });
 }

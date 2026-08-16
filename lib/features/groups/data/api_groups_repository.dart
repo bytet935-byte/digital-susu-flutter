@@ -208,6 +208,52 @@ class ApiGroupsRepository implements GroupsRepository {
     );
   }
 
+  @override
+  Future<Result<List<GroupProposal>>> getProposals(String groupId) async {
+    try {
+      // Server returns { proposals: [...] }.
+      final data = await _client.getMap(ApiEndpoints.groupProposals(groupId));
+      final items = data['proposals'];
+      if (items is! List<dynamic>) throw const MalformedResponseException();
+      return Success<List<GroupProposal>>(items
+          .whereType<Map<String, dynamic>>()
+          .map(GroupProposal.fromJson)
+          .toList());
+    } on AppException catch (error) {
+      return Failure<List<GroupProposal>>(error);
+    }
+  }
+
+  @override
+  Future<Result<GroupProposal>> voteProposal({
+    required String groupId,
+    required String proposalId,
+    required String option,
+  }) async {
+    try {
+      await _client.postMap(
+        ApiEndpoints.groupProposalVote(groupId, proposalId),
+        data: <String, dynamic>{'option': option},
+      );
+      // The vote endpoint returns { message }; re-fetch for the updated
+      // proposal (votes + my_vote).
+      final updated = await getProposals(groupId);
+      switch (updated) {
+        case Success<List<GroupProposal>>(:final value):
+          for (final GroupProposal p in value) {
+            if (p.id == proposalId) return Success<GroupProposal>(p);
+          }
+          return const Failure<GroupProposal>(
+            NotFoundException(message: 'Proposal not found after voting.'),
+          );
+        case Failure<List<GroupProposal>>(:final error):
+          return Failure<GroupProposal>(error);
+      }
+    } on AppException catch (error) {
+      return Failure<GroupProposal>(error);
+    }
+  }
+
   /// Maps a server group payload (wallet/contribution fields aggregated by
   /// the backend) onto the app's SusuGroup model.
   SusuGroup _mapGroup(Map<String, dynamic> json) {

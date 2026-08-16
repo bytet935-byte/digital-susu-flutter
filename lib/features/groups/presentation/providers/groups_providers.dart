@@ -127,6 +127,50 @@ final businessReportProvider =
   };
 });
 
+/// Governance proposals per group (spec §20); voting updates the list.
+final groupProposalsProvider =
+    AsyncNotifierProvider.family<ProposalsController, List<GroupProposal>, String>(
+  ProposalsController.new,
+);
+
+class ProposalsController extends FamilyAsyncNotifier<List<GroupProposal>, String> {
+  @override
+  Future<List<GroupProposal>> build(String groupId) => _fetch(groupId);
+
+  Future<List<GroupProposal>> _fetch(String groupId) async {
+    final result = await ref.read(groupsRepositoryProvider).getProposals(groupId);
+    return switch (result) {
+      Success<List<GroupProposal>>(:final value) => value,
+      Failure<List<GroupProposal>>(:final error) => throw error,
+    };
+  }
+
+  /// Returns `true` on success so the UI can confirm with a snackbar.
+  Future<bool> vote({
+    required String groupId,
+    required String proposalId,
+    required String option,
+  }) async {
+    final result = await ref.read(groupsRepositoryProvider).voteProposal(
+          groupId: groupId,
+          proposalId: proposalId,
+          option: option,
+        );
+    return switch (result) {
+      Success<GroupProposal>(:final value) => _apply(updated: value),
+      Failure<GroupProposal>() => false,
+    };
+  }
+
+  bool _apply({required GroupProposal updated}) {
+    final current = state.valueOrNull ?? <GroupProposal>[];
+    state = AsyncData<List<GroupProposal>>(
+      current.map((GroupProposal p) => p.id == updated.id ? updated : p).toList(),
+    );
+    return true;
+  }
+}
+
 /// Group members.
 final groupMembersProvider =
     FutureProvider.family<List<GroupMember>, String>((ref, groupId) async {
