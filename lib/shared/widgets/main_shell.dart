@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/routing/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 
 /// Application shell with the design-reference navigation (spec §21, §31):
@@ -25,9 +26,7 @@ class MainShell extends StatelessWidget {
   }
 
   void _createSusu(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Create Susu arrives in Phase 5')),
-    );
+    context.go(AppRoutes.groupCreate);
   }
 
   @override

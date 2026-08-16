@@ -3,9 +3,9 @@
 Ghana-first digital savings, **susu**, wallet, contribution, group-management
 and financial-record platform — built with Flutter.
 
-> **Status: Phase 1 (Foundation) — code written, NOT yet verified on a machine
-> with the Flutter SDK.** Run the verification commands below and report any
-> failures so they can be fixed before Phase 2.
+> **Status: verified on Flutter 3.47.0 stable — `flutter analyze` clean,
+> 98/98 tests pass, production web build OK.** Current focus: Phase 6–7
+> (contributions, payments, susu systems).
 
 ## Quick start
 
@@ -118,13 +118,13 @@ touching business logic.
 
 | Phase | Scope | Status |
 |-------|-------|--------|
-| 1 | Foundation: config, theme, routing, storage, utils, shared widgets | ✅ Code written — awaiting local verification |
-| 2 | Network/API layer (dio, interceptors, token refresh, mock fallback) | ✅ Code written — awaiting local verification |
-| 3 | Authentication (register, login, OTP, sessions, permissions) | ✅ Code written — awaiting local verification |
-| 4 | Profile, dashboard, notifications, settings | ✅ Code written — awaiting local verification |
+| 1 | Foundation: config, theme, routing, storage, utils, shared widgets | ✅ Verified — 98/98 tests pass |
+| 2 | Network/API layer (dio, interceptors, token refresh, mock fallback) | ✅ Verified — 98/98 tests pass |
+| 3 | Authentication (register, login, OTP, sessions, permissions) | ✅ Verified — 98/98 tests pass |
+| 4 | Profile, dashboard, notifications, settings | ✅ Verified — 98/98 tests pass |
 | B | Backend API (Node/TS/Express/PG) | ✅ Verified — typecheck + 18 tests + live smoke test pass |
-| 5 | Groups, members, permissions, chat | ✅ Code written — awaiting local verification |
-| 6 | Financial system: wallets, contributions, transactions, payments | Pending |
+| 5 | Groups, members, permissions, chat | ✅ Verified — 98/98 tests pass |
+| 6 | Financial system: wallets, contributions, transactions, payments | ✅ Wallet done — contributions/payments pending |
 | 7 | Susu systems: rotational susu, savings goals, joint business | Pending |
 | 8 | Governance: proposals, voting, moderation, audit | Pending |
 | 9 | Reporting & KYC | Pending |

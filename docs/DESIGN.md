@@ -109,7 +109,13 @@ New Member Added.
 - ✅ Profile screen (avatar, name, phone, KYC chip, menu, red Logout) — Phase 4
 - ✅ Settings screen (notification toggles, market readout) — Phase 4
 - ✅ Bottom nav shell (Home · Groups · [+] · Wallet · Profile) — Phase 4
-- ⏳ Wallet, My Susu list, Susu Details, Contribute, Payments, Chat —
+- ✅ Wallet — **Phase 6**: balance card (GHS style, eye toggle) with Top Up /
+  Withdraw amount sheets (GHS 10/20/50/100 presets, balance validation),
+  quick actions (Add Money, Send Money, Bank Transfer, Airtime), recent
+  wallet transactions (green credits / red debits); mock + API repositories
+  (`GET /wallet`, `POST /wallet/top-up`, `POST /wallet/withdraw`), shell +
+  dashboard "View Wallet" wired in
+- ⏳ My Susu list, Susu Details, Contribute, Payments, Chat —
   Phase 5–7 with the feature work
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11
