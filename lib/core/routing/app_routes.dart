@@ -33,6 +33,7 @@ abstract final class AppRoutes {
   static const String transactions = '/transactions';
   static const String notifications = '/notifications';
   static const String invite = '/invite';
+  static const String chats = '/chats';
   static const String chat = '/chat';
   static const String voting = '/voting';
   static const String reports = '/reports';

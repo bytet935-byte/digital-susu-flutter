@@ -168,5 +168,13 @@ New Member Added.
   `/groups/:id/members[...]` (`identifier`/`role` bodies); ApiClient
   gained `patchMap`/`deleteMap`; state refetches from the repository
   after mutations; 11 new tests
+- ✅ Elder-Friendly Mode — dashboard accessibility toggle: high-contrast
+  large-button layout (DEPOSIT / WITHDRAW / SEND, 46pt balance, simplified
+  groups + recent activity); `elderModeProvider` + header toggle; widget
+  tests for both directions
+- ✅ Quick-action Hub — FAB / centre "+" opens a bottom sheet: Deposit,
+  Create Susu, Susu Calculator (contribution × members → pot per cycle,
+  total pooled, your total; steppers + live results), USSD Mode (*713#
+  simulator with preset codes and guidance); tests for each
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

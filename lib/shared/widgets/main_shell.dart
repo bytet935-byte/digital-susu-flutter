@@ -93,10 +93,16 @@ class MainShell extends StatelessWidget {
         }
         return Scaffold(
           body: navigationShell,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => _openHub(context),
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            tooltip: 'Quick actions',
+            child: const Icon(Icons.add),
+          ),
           bottomNavigationBar: _BottomBar(
             currentIndex: navigationShell.currentIndex,
             onSelect: _goBranch,
-            onCreate: () => _openHub(context),
           ),
         );
       },
@@ -162,6 +168,11 @@ class _DesktopShell extends StatelessWidget {
                 label: Text('Groups'),
               ),
               NavigationRailDestination(
+                icon: Icon(Icons.chat_bubble_outline),
+                selectedIcon: Icon(Icons.chat_bubble),
+                label: Text('Chats'),
+              ),
+              NavigationRailDestination(
                 icon: Icon(Icons.account_balance_wallet_outlined),
                 selectedIcon: Icon(Icons.account_balance_wallet),
                 label: Text('Wallet'),
@@ -195,12 +206,10 @@ class _BottomBar extends StatelessWidget {
   const _BottomBar({
     required this.currentIndex,
     required this.onSelect,
-    required this.onCreate,
   });
 
   final int currentIndex;
   final ValueChanged<int> onSelect;
-  final VoidCallback onCreate;
 
   @override
   Widget build(BuildContext context) {
@@ -227,43 +236,27 @@ class _BottomBar extends StatelessWidget {
               selected: currentIndex == 1,
               onTap: () => onSelect(1),
             ),
-            // Centre create action.
-            GestureDetector(
-              onTap: onCreate,
-              child: Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: <Color>[AppColors.primary, AppColors.primaryDark],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.4),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: const Icon(Icons.add, color: Colors.white, size: 30),
-              ),
+            // Chats sits in the centre of the nav (spec: Chat tab).
+            _NavItem(
+              icon: Icons.chat_bubble_outline,
+              selectedIcon: Icons.chat_bubble,
+              label: 'Chats',
+              selected: currentIndex == 2,
+              onTap: () => onSelect(2),
             ),
             _NavItem(
               icon: Icons.account_balance_wallet_outlined,
               selectedIcon: Icons.account_balance_wallet,
               label: 'Wallet',
-              selected: currentIndex == 2,
-              onTap: () => onSelect(2),
+              selected: currentIndex == 3,
+              onTap: () => onSelect(3),
             ),
             _NavItem(
               icon: Icons.person_outline,
               selectedIcon: Icons.person,
               label: 'Profile',
-              selected: currentIndex == 3,
-              onTap: () => onSelect(3),
+              selected: currentIndex == 4,
+              onTap: () => onSelect(4),
             ),
           ],
         ),

@@ -122,6 +122,11 @@ class ProfileScreen extends ConsumerWidget {
             onTap: () => _comingSoon(context, 'Bank accounts arrive in Phase 6'),
           ),
           _MenuTile(
+            icon: Icons.assessment_outlined,
+            label: 'Reports',
+            onTap: () => context.go(AppRoutes.reports),
+          ),
+          _MenuTile(
             icon: Icons.security_outlined,
             label: 'Security',
             onTap: () => _comingSoon(context, 'Security settings arrive in Phase 8'),

@@ -15,8 +15,10 @@ import '../../features/groups/presentation/screens/group_details_screen.dart';
 import '../../features/groups/presentation/screens/groups_screen.dart';
 import '../../features/groups/presentation/screens/invite_screen.dart';
 import '../../features/groups/presentation/screens/join_group_screen.dart';
+import '../../features/chats/presentation/screens/chats_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/payments/presentation/screens/payments_screen.dart';
+import '../../features/reports/presentation/screens/reports_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
@@ -82,7 +84,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           identifier: state.uri.queryParameters['identifier'] ?? '',
         ),
       ),
-      // Authenticated app shell: Home · Groups · [+] · Wallet · Profile
+      // Authenticated app shell: Home · Groups · Chats · Wallet · Profile
       // (design reference bottom navigation, spec §31).
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -103,6 +105,15 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: AppRoutes.groups,
                 name: 'groups',
                 builder: (context, state) => const GroupsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: AppRoutes.chats,
+                name: 'chats',
+                builder: (context, state) => const ChatsScreen(),
               ),
             ],
           ),
@@ -162,6 +173,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.invite,
         name: 'invite',
         builder: (context, state) => const InviteScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reports,
+        name: 'reports',
+        builder: (context, state) => const ReportsScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,
