@@ -37,4 +37,8 @@ abstract interface class GroupsRepository {
 
   /// Invite code used by the join-by-code flow (design reference Invite).
   Future<Result<String>> getInviteCode(String groupId);
+
+  /// Payout schedule for rotational susu groups (Phase 7); other group
+  /// types fail with a "no schedule" error and the UI hides the card.
+  Future<Result<SusuSchedule>> getPayoutSchedule(String groupId);
 }

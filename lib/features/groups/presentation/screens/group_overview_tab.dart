@@ -52,6 +52,10 @@ class GroupOverviewTab extends ConsumerWidget {
           const SizedBox(height: 16),
           _ContributionProgress(group: group),
         ],
+        if (group.type == GroupTypes.rotationalSusu) ...<Widget>[
+          const SizedBox(height: 16),
+          _PayoutScheduleCard(groupId: group.id),
+        ],
         const SizedBox(height: 20),
         // Contribution progress is driven by the contribution schedule
         // (Phase 7); the sheet below is the Phase 6 entry point.
@@ -156,6 +160,133 @@ class _ContributionProgress extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               '${(progress.clamp(0.0, 1.0) * 100).round()}% of target',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Rotational susu payout schedule (Phase 7): cycle progress, next payout
+/// and the upcoming rotation. Hidden when no schedule is available.
+class _PayoutScheduleCard extends ConsumerWidget {
+  const _PayoutScheduleCard({required this.groupId});
+
+  final String groupId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scheduleAsync = ref.watch(payoutScheduleProvider(groupId));
+    return scheduleAsync.when(
+      loading: () => const SizedBox(height: 80),
+      error: (error, stackTrace) => const SizedBox.shrink(),
+      data: (schedule) => _PayoutCard(schedule: schedule),
+    );
+  }
+}
+
+class _PayoutCard extends StatelessWidget {
+  const _PayoutCard({required this.schedule});
+
+  final SusuSchedule schedule;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final next = schedule.upcomingPayouts.firstOrNull;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Payout Schedule', style: theme.textTheme.titleSmall),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    'Cycle ${schedule.cycleNumber} of ${schedule.totalCycles}',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: schedule.progress,
+                minHeight: 6,
+                backgroundColor: AppColors.background,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: <Widget>[
+                const Icon(Icons.payments_outlined,
+                    size: 18, color: AppColors.primary),
+                const SizedBox(width: 8),
+                Text(
+                  'Next payout: ${schedule.payoutAmount.format()}',
+                  style: theme.textTheme.emphasis,
+                ),
+              ],
+            ),
+            if (next != null) ...<Widget>[
+              const SizedBox(height: 4),
+              Padding(
+                padding: const EdgeInsets.only(left: 26),
+                child: Text(
+                  '${next.memberName} · '
+                  '${DateFormatter.formatDate(next.date)}',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ),
+            ],
+            const Divider(height: 24),
+            Text('Upcoming payouts', style: theme.textTheme.titleSmall),
+            const SizedBox(height: 4),
+            for (final PayoutTurn turn in schedule.upcomingPayouts)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        turn.memberName,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    Text(
+                      DateFormatter.formatDate(turn.date),
+                      style: theme.textTheme.bodySmall,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      turn.amount.format(),
+                      style: theme.textTheme.emphasis,
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 6),
+            Text(
+              '${schedule.contributionPerCycle.format()} per cycle · '
+              '${schedule.frequencyLabel}',
               style: theme.textTheme.bodySmall,
             ),
           ],

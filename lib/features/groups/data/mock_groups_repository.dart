@@ -326,4 +326,48 @@ class MockGroupsRepository implements GroupsRepository {
     }
     return Success<String>(code);
   }
+
+  @override
+  Future<Result<SusuSchedule>> getPayoutSchedule(String groupId) async {
+    // Only rotational groups carry a payout cycle (Phase 7).
+    if (groupId != 'grp_weekend') {
+      return const Failure<SusuSchedule>(
+        NotFoundException(
+          message: 'No payout schedule for this group type.',
+        ),
+      );
+    }
+    // DateTime(...) prevents a const schedule; amounts stay const.
+    return Success<SusuSchedule>(
+      SusuSchedule(
+        cycleNumber: 12,
+        totalCycles: 26,
+        frequencyLabel: 'Weekly',
+        contributionPerCycle: const Money(10000),
+        payoutAmount: const Money(100000),
+        upcomingPayouts: <PayoutTurn>[
+          PayoutTurn(
+            memberName: 'Ama Serwaa',
+            date: DateTime(2026, 8, 25),
+            amount: const Money(100000),
+          ),
+          PayoutTurn(
+            memberName: 'Kofi Mensah',
+            date: DateTime(2026, 9, 1),
+            amount: const Money(100000),
+          ),
+          PayoutTurn(
+            memberName: 'Nana Yeboah',
+            date: DateTime(2026, 9, 8),
+            amount: const Money(100000),
+          ),
+          PayoutTurn(
+            memberName: 'Kwame Owusu',
+            date: DateTime(2026, 9, 15),
+            amount: const Money(100000),
+          ),
+        ],
+      ),
+    );
+  }
 }

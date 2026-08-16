@@ -145,4 +145,29 @@ void main() {
       expect((result as Failure<String>).error, isA<NotFoundException>());
     });
   });
+
+  group('MockGroupsRepository — payout schedule (Phase 7)', () {
+    test('returns the rotational cycle with upcoming turns', () async {
+      final result = await repo.getPayoutSchedule('grp_weekend');
+
+      expect(result.isSuccess, isTrue);
+      final schedule = result.valueOrNull!;
+      expect(schedule.cycleNumber, 12);
+      expect(schedule.totalCycles, 26);
+      expect(schedule.frequencyLabel, 'Weekly');
+      expect(schedule.contributionPerCycle, const Money(10000));
+      expect(schedule.payoutAmount, const Money(100000));
+      expect(schedule.upcomingPayouts, hasLength(4));
+      expect(schedule.upcomingPayouts.first.memberName, 'Ama Serwaa');
+      expect(schedule.upcomingPayouts.first.date, DateTime(2026, 8, 25));
+      expect(schedule.progress, closeTo(12 / 26, 0.0001));
+    });
+
+    test('fails for non-rotational group types', () async {
+      final result = await repo.getPayoutSchedule('grp_project');
+      expect(result, isA<Failure<SusuSchedule>>());
+      expect((result as Failure<SusuSchedule>).error,
+          isA<NotFoundException>());
+    });
+  });
 }

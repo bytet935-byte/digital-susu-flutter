@@ -92,6 +92,18 @@ final inviteCodeProvider =
   };
 });
 
+/// Payout schedule for rotational groups (Phase 7); fails gracefully for
+/// other group types and in API mode (card hidden).
+final payoutScheduleProvider =
+    FutureProvider.family<SusuSchedule, String>((ref, groupId) async {
+  final result =
+      await ref.read(groupsRepositoryProvider).getPayoutSchedule(groupId);
+  return switch (result) {
+    Success<SusuSchedule>(:final value) => value,
+    Failure<SusuSchedule>(:final error) => throw error,
+  };
+});
+
 /// Group members.
 final groupMembersProvider =
     FutureProvider.family<List<GroupMember>, String>((ref, groupId) async {

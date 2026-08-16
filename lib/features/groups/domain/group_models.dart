@@ -212,3 +212,57 @@ class GroupContribution extends Equatable {
   List<Object?> get props =>
       <Object?>[id, groupId, amount, paymentMethod, timestamp];
 }
+
+/// Rotational susu payout schedule (Phase 7): cycle progress, contribution
+/// per cycle, the next payout and the upcoming rotation order.
+class SusuSchedule extends Equatable {
+  const SusuSchedule({
+    required this.cycleNumber,
+    required this.totalCycles,
+    required this.frequencyLabel,
+    required this.contributionPerCycle,
+    required this.payoutAmount,
+    required this.upcomingPayouts,
+  });
+
+  final int cycleNumber;
+  final int totalCycles;
+
+  /// e.g. `Weekly`, `Fortnightly`, `Monthly`.
+  final String frequencyLabel;
+  final Money contributionPerCycle;
+  final Money payoutAmount;
+
+  /// Sorted by date; the first entry is the next payout.
+  final List<PayoutTurn> upcomingPayouts;
+
+  double get progress => totalCycles <= 0
+      ? 0
+      : (cycleNumber / totalCycles).clamp(0.0, 1.0);
+
+  @override
+  List<Object?> get props => <Object?>[
+        cycleNumber,
+        totalCycles,
+        frequencyLabel,
+        contributionPerCycle,
+        payoutAmount,
+        upcomingPayouts,
+      ];
+}
+
+/// One payout turn in the rotation (Phase 7).
+class PayoutTurn extends Equatable {
+  const PayoutTurn({
+    required this.memberName,
+    required this.date,
+    required this.amount,
+  });
+
+  final String memberName;
+  final DateTime date;
+  final Money amount;
+
+  @override
+  List<Object?> get props => <Object?>[memberName, date, amount];
+}

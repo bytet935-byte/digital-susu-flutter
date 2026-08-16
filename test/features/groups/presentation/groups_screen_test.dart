@@ -88,6 +88,49 @@ void main() {
       expect(find.text('30% of target'), findsOneWidget);
     });
 
+    testWidgets('rotational groups show the payout schedule card',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_weekend',
+        name: 'Weekend Susu',
+        type: GroupTypes.rotationalSusu,
+        status: GroupStatuses.active,
+        pot: Money(50000),
+        memberCount: 10,
+        totalMembers: 10,
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Payout Schedule'), findsOneWidget);
+      expect(find.text('Cycle 12 of 26'), findsOneWidget);
+      expect(find.text('Ama Serwaa'), findsOneWidget);
+
+      // The footer is below the fold in the lazy ListView — scroll to it.
+      await tester.scrollUntilVisible(
+        find.textContaining('per cycle'),
+        200,
+      );
+      expect(find.textContaining('GH₵ 100.00 per cycle'), findsOneWidget);
+    });
+
+    testWidgets('savings-goal groups hide the payout schedule card',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_project',
+        name: 'Project Susu',
+        type: GroupTypes.savingsGoal,
+        status: GroupStatuses.active,
+        pot: Money(75000),
+        memberCount: 15,
+        totalMembers: 15,
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Rotational Susu'), findsNothing);
+    });
+
     testWidgets('Contribute Now opens the sheet and records a contribution',
         (tester) async {
       const group = SusuGroup(
@@ -102,6 +145,7 @@ void main() {
       await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(find.text('Contribute Now'), 200);
       await tester.tap(find.text('Contribute Now'));
       await tester.pumpAndSettle();
 
