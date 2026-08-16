@@ -15,6 +15,7 @@ import '../../features/groups/presentation/screens/group_details_screen.dart';
 import '../../features/groups/presentation/screens/groups_screen.dart';
 import '../../features/groups/presentation/screens/join_group_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
+import '../../features/payments/presentation/screens/payments_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
@@ -150,6 +151,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.transactions,
         name: 'transactions',
         builder: (context, state) => const TransactionsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.payments,
+        name: 'payments',
+        builder: (context, state) => const PaymentsScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,

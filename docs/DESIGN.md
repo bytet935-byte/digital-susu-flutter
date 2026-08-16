@@ -121,7 +121,12 @@ New Member Added.
   repository (mock updates the pot; API posts
   `POST /groups/:id/contributions` with idempotency key) and refreshes the
   group pot
-- ⏳ My Susu list, Susu Details, Payments, Chat —
+- ✅ Payments — **Phase 6** (screen 10): gradient wallet-balance header
+  (GHS style) + color-coded payment list (green credits / red debits),
+  type icons, timestamps and Completed / Pending / Failed status chips;
+  mock + API repositories (ledger served by `GET /transactions`), route
+  `/payments` registered and dashboard "Payments" quick action wired to it
+- ⏳ My Susu list, Susu Details, Chat —
   Phase 5–7 with the feature work
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

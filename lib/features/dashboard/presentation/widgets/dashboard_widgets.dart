@@ -361,7 +361,7 @@ class QuickActions extends StatelessWidget {
           color: AppColors.quickPurple,
           icon: Icons.account_balance_wallet_outlined,
           label: 'Payments',
-          onTap: () => context.go(AppRoutes.transactions),
+          onTap: () => context.go(AppRoutes.payments),
         ),
         _CircleAction(
           color: AppColors.quickTeal,
