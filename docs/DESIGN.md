@@ -130,7 +130,13 @@ New Member Added.
   susu groups with invite codes (mock SUSU-4821 / SUSU-7395 / SUSU-2106; API
   falls back until the server returns `invite_code`), one-tap Copy with
   confirmation; feeds the join-by-code flow
-- ⏳ My Susu list, Susu Details, Chat —
-  Phase 5–7 with the feature work
+- ✅ My Susu list (screen 7), Susu Details (screen 8, incl. My Contribution
+  progress bar), Group Chat (screen 11) — Phases 5–6
+- ✅ Rotational Susu payout schedule — **Phase 7**: SusuSchedule + PayoutTurn
+  models; mock cycle for Weekend Susu (12 of 26, weekly, GHS 100/cycle,
+  GHS 1,000 payouts, upcoming rotation); overview "Payout Schedule" card
+  (cycle progress + next payout recipient + upcoming turns); hidden for
+  non-rotational groups and in API mode until the backend endpoint lands
+- ⏳ Savings-goal milestones / joint-business reports — Phase 7
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11
