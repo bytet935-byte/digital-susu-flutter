@@ -124,7 +124,7 @@ touching business logic.
 | 4 | Profile, dashboard, notifications, settings | ✅ Verified — 98/98 tests pass |
 | B | Backend API (Node/TS/Express/PG) | ✅ Verified — typecheck + 18 tests + live smoke test pass |
 | 5 | Groups, members, permissions, chat | ✅ Verified — 98/98 tests pass |
-| 6 | Financial system: wallets, contributions, transactions, payments | ✅ Wallet done — contributions/payments pending |
+| 6 | Financial system: wallets, contributions, transactions, payments | ✅ Wallet + Contribute done — payments pending |
 | 7 | Susu systems: rotational susu, savings goals, joint business | Pending |
 | 8 | Governance: proposals, voting, moderation, audit | Pending |
 | 9 | Reporting & KYC | Pending |

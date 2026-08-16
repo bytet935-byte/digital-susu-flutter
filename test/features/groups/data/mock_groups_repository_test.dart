@@ -3,6 +3,7 @@ import 'package:digital_susu/core/errors/app_exception.dart';
 import 'package:digital_susu/core/utils/result.dart';
 import 'package:digital_susu/features/groups/data/mock_groups_repository.dart';
 import 'package:digital_susu/features/groups/domain/group_models.dart';
+import 'package:digital_susu/shared/models/money.dart';
 
 void main() {
   late MockGroupsRepository repo;
@@ -79,6 +80,51 @@ void main() {
         senderName: 'x',
       );
       expect(empty, isA<Failure<GroupMessage>>());
+    });
+  });
+
+  group('MockGroupsRepository — contributions (spec §9)', () {
+    test('contribute adds to the pot and returns a receipt', () async {
+      final before = (await repo.getGroup('grp_weekend')).valueOrNull!;
+      expect(before.pot, const Money(50000));
+
+      final result = await repo.contribute(
+        groupId: 'grp_weekend',
+        amount: const Money(5000),
+        paymentMethod: 'MOBILE_MONEY',
+        idempotencyKey: 'contrib_test_1',
+      );
+
+      expect(result.isSuccess, isTrue);
+      final receipt = result.valueOrNull!;
+      expect(receipt.amount, const Money(5000));
+      expect(receipt.paymentMethod, 'MOBILE_MONEY');
+      expect(receipt.groupId, 'grp_weekend');
+
+      final after = (await repo.getGroup('grp_weekend')).valueOrNull!;
+      expect(after.pot, const Money(55000));
+    });
+
+    test('contribute rejects invalid amounts and unknown groups', () async {
+      final zero = await repo.contribute(
+        groupId: 'grp_weekend',
+        amount: const Money(0),
+        paymentMethod: 'CARD',
+        idempotencyKey: 'contrib_test_2',
+      );
+      expect(zero, isA<Failure<GroupContribution>>());
+      expect((zero as Failure<GroupContribution>).error,
+          isA<ValidationException>());
+
+      final missing = await repo.contribute(
+        groupId: 'grp_unknown',
+        amount: const Money(1000),
+        paymentMethod: 'CARD',
+        idempotencyKey: 'contrib_test_3',
+      );
+      expect(missing, isA<Failure<GroupContribution>>());
+      expect((missing as Failure<GroupContribution>).error,
+          isA<NotFoundException>());
     });
   });
 }

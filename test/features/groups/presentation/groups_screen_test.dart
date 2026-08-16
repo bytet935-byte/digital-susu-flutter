@@ -5,9 +5,12 @@ import 'package:digital_susu/features/authentication/domain/models/auth_session.
 import 'package:digital_susu/features/authentication/domain/models/user.dart';
 import 'package:digital_susu/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:digital_susu/features/groups/data/mock_groups_repository.dart';
+import 'package:digital_susu/features/groups/domain/group_models.dart';
 import 'package:digital_susu/features/groups/presentation/providers/groups_providers.dart';
 import 'package:digital_susu/features/groups/presentation/screens/group_chat_tab.dart';
+import 'package:digital_susu/features/groups/presentation/screens/group_overview_tab.dart';
 import 'package:digital_susu/features/groups/presentation/screens/groups_screen.dart';
+import 'package:digital_susu/shared/models/money.dart';
 
 Widget wrap(Widget child) => ProviderScope(
       overrides: <Override>[
@@ -62,6 +65,34 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Choir Savings'), findsOneWidget);
+    });
+
+    testWidgets('Contribute Now opens the sheet and records a contribution',
+        (tester) async {
+      const group = SusuGroup(
+        id: 'grp_weekend',
+        name: 'Weekend Susu',
+        type: GroupTypes.rotationalSusu,
+        status: GroupStatuses.active,
+        pot: Money(50000),
+        memberCount: 10,
+        totalMembers: 10,
+      );
+      await tester.pumpWidget(wrap(const GroupOverviewTab(group: group)));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Contribute Now'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Contribute to Weekend Susu'), findsOneWidget);
+      expect(find.text('Pot: GHS 500.00'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(ChoiceChip, 'GHS 50'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Contribution recorded 🎉'), findsOneWidget);
     });
   });
 

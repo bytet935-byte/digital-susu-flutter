@@ -257,4 +257,47 @@ class MockGroupsRepository implements GroupsRepository {
     _messages.putIfAbsent(groupId, () => <GroupMessage>[]).add(message);
     return Success<GroupMessage>(message);
   }
+
+  @override
+  Future<Result<GroupContribution>> contribute({
+    required String groupId,
+    required Money amount,
+    required String paymentMethod,
+    required String idempotencyKey,
+  }) async {
+    if (amount.amountMinor <= 0) {
+      return const Failure<GroupContribution>(
+        ValidationException(message: 'Enter an amount greater than zero.'),
+      );
+    }
+    final index = _groups.indexWhere((SusuGroup g) => g.id == groupId);
+    if (index == -1) {
+      return const Failure<GroupContribution>(
+        NotFoundException(message: 'Group not found.'),
+      );
+    }
+    final group = _groups[index];
+    // SusuGroup has no copyWith — rebuild with the updated pot.
+    _groups[index] = SusuGroup(
+      id: group.id,
+      name: group.name,
+      type: group.type,
+      status: group.status,
+      pot: group.pot + amount,
+      memberCount: group.memberCount,
+      totalMembers: group.totalMembers,
+      description: group.description,
+      nextPayout: group.nextPayout,
+      currency: group.currency,
+    );
+    return Success<GroupContribution>(
+      GroupContribution(
+        id: idempotencyKey,
+        groupId: groupId,
+        amount: amount,
+        paymentMethod: paymentMethod,
+        timestamp: DateTime.now(),
+      ),
+    );
+  }
 }

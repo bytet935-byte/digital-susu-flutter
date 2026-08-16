@@ -115,7 +115,13 @@ New Member Added.
   wallet transactions (green credits / red debits); mock + API repositories
   (`GET /wallet`, `POST /wallet/top-up`, `POST /wallet/withdraw`), shell +
   dashboard "View Wallet" wired in
-- ⏳ My Susu list, Susu Details, Contribute, Payments, Chat —
+- ✅ Contribute — **Phase 6**: "Contribute Now" opens the design-reference
+  sheet (GHS 10/20/50/100 presets, amount input, Mobile Money / Card
+  segmented selector, Continue); records a contribution via the groups
+  repository (mock updates the pot; API posts
+  `POST /groups/:id/contributions` with idempotency key) and refreshes the
+  group pot
+- ⏳ My Susu list, Susu Details, Payments, Chat —
   Phase 5–7 with the feature work
 - ⏳ Onboarding screen — Phase 11 polish
 - ⏳ Full visual polish — Phase 11

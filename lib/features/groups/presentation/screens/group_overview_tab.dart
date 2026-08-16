@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/widgets/status_badge.dart';
+import '../../../contributions/presentation/widgets/contribute_sheet.dart';
 import '../../domain/group_models.dart';
+import '../providers/groups_providers.dart';
 /// Overview tab (build spec §9): description, status, pot, members, next
-/// payout, type. Contribution flow arrives with Phase 6.
-class GroupOverviewTab extends StatelessWidget {
+/// payout, type, and the Contribute Now entry point (Phase 6).
+class GroupOverviewTab extends ConsumerWidget {
   const GroupOverviewTab({super.key, required this.group});
 
   final SusuGroup group;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -47,12 +50,21 @@ class GroupOverviewTab extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         // Contribution progress is driven by the contribution schedule
-        // (Phase 7); the button below is the Phase 6 entry point.
+        // (Phase 7); the sheet below is the Phase 6 entry point.
         FilledButton.icon(
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Contributions arrive in Phase 6')),
-            );
+          onPressed: () async {
+            final contributed =
+                await showContributeSheet(context, group: group);
+            if (contributed == true && context.mounted) {
+              // Refresh the pot shown in the overview/stats.
+              ref.invalidate(groupDetailsProvider(group.id));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Contribution recorded 🎉'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
           },
           icon: const Icon(Icons.savings_outlined),
           label: const Text('Contribute Now'),

@@ -121,6 +121,44 @@ class ApiGroupsRepository implements GroupsRepository {
     }
   }
 
+  @override
+  Future<Result<GroupContribution>> contribute({
+    required String groupId,
+    required Money amount,
+    required String paymentMethod,
+    required String idempotencyKey,
+  }) async {
+    try {
+      final data = await _client.postMap(
+        ApiEndpoints.groupContributions(groupId),
+        data: <String, dynamic>{
+          'amount_minor': amount.amountMinor,
+          'payment_method': paymentMethod,
+          'idempotency_key': idempotencyKey,
+        },
+      );
+      final id = data['id'];
+      final amountMinor = data['amount_minor'];
+      if (id is! String || amountMinor is! int) {
+        throw const MalformedResponseException();
+      }
+      final createdAt = data['created_at'];
+      return Success<GroupContribution>(
+        GroupContribution(
+          id: id,
+          groupId: groupId,
+          amount: Money(amountMinor),
+          paymentMethod: paymentMethod,
+          timestamp: createdAt is String
+              ? DateTime.tryParse(createdAt) ?? DateTime.now()
+              : DateTime.now(),
+        ),
+      );
+    } on AppException catch (error) {
+      return Failure<GroupContribution>(error);
+    }
+  }
+
   /// Maps a server group payload (wallet/contribution fields aggregated by
   /// the backend) onto the app's SusuGroup model.
   SusuGroup _mapGroup(Map<String, dynamic> json) {

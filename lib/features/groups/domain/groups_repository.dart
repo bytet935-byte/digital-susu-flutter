@@ -1,4 +1,5 @@
 import '../../../core/utils/result.dart';
+import '../../../shared/models/money.dart';
 import 'group_models.dart';
 
 /// Groups contract (spec §6, §14; build spec §8–§10).
@@ -24,5 +25,13 @@ abstract interface class GroupsRepository {
     required String body,
     required String senderId,
     required String senderName,
+  });
+
+  /// Records a contribution to the group pot (spec §9, Phase 6).
+  Future<Result<GroupContribution>> contribute({
+    required String groupId,
+    required Money amount,
+    required String paymentMethod,
+    required String idempotencyKey,
   });
 }

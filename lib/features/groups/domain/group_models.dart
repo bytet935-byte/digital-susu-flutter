@@ -173,3 +173,26 @@ class GroupMessage extends Equatable {
   @override
   List<Object?> get props => <Object?>[id, senderId, senderName, body, createdAt];
 }
+
+/// A recorded group contribution receipt (spec §9, Phase 6).
+class GroupContribution extends Equatable {
+  const GroupContribution({
+    required this.id,
+    required this.groupId,
+    required this.amount,
+    required this.paymentMethod,
+    required this.timestamp,
+  });
+
+  final String id;
+  final String groupId;
+  final Money amount;
+
+  /// `MOBILE_MONEY` | `CARD` (spec §9).
+  final String paymentMethod;
+  final DateTime timestamp;
+
+  @override
+  List<Object?> get props =>
+      <Object?>[id, groupId, amount, paymentMethod, timestamp];
+}
