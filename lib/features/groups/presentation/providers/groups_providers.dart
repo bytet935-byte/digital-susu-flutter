@@ -82,6 +82,16 @@ final groupDetailsProvider =
   };
 });
 
+/// Invite code per group (design reference Invite quick action).
+final inviteCodeProvider =
+    FutureProvider.family<String, String>((ref, groupId) async {
+  final result = await ref.read(groupsRepositoryProvider).getInviteCode(groupId);
+  return switch (result) {
+    Success<String>(:final value) => value,
+    Failure<String>(:final error) => throw error,
+  };
+});
+
 /// Group members.
 final groupMembersProvider =
     FutureProvider.family<List<GroupMember>, String>((ref, groupId) async {

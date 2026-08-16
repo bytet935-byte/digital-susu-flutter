@@ -130,4 +130,19 @@ void main() {
           isA<NotFoundException>());
     });
   });
+
+  group('MockGroupsRepository — invite codes', () {
+    test('returns a deterministic code per group', () async {
+      final weekend = (await repo.getInviteCode('grp_weekend')).valueOrNull!;
+      expect(weekend, 'SUSU-4821');
+      expect((await repo.getInviteCode('grp_project')).valueOrNull,
+          'SUSU-7395');
+    });
+
+    test('rejects unknown groups', () async {
+      final result = await repo.getInviteCode('grp_unknown');
+      expect(result, isA<Failure<String>>());
+      expect((result as Failure<String>).error, isA<NotFoundException>());
+    });
+  });
 }

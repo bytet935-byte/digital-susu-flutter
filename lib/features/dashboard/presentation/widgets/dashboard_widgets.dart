@@ -367,12 +367,7 @@ class QuickActions extends StatelessWidget {
           color: AppColors.quickTeal,
           icon: Icons.person_add_alt_1_outlined,
           label: 'Invite',
-          onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Invite friends is coming soon'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          ),
+          onTap: () => context.go(AppRoutes.invite),
         ),
         _CircleAction(
           color: AppColors.danger,
